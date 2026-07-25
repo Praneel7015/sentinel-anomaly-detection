@@ -44,6 +44,7 @@ from sentinel.serving.models import (
     DetectorScores,
     DriftState,
     EntityDetailResponse,
+    EntityListResponse,
     EntitySummary,
     FeedbackRequest,
     FeedbackResponse,
@@ -423,6 +424,48 @@ async def alert_detail(event_id: str) -> AlertDetailResponse:
         entity_summary=entity_summary,
         similar_alerts=similar,
     )
+
+
+# --------------------------------------------------------------------------- #
+# GET /api/entities  (list)
+# --------------------------------------------------------------------------- #
+
+
+@router.get("/entities", response_model=EntityListResponse)
+async def entity_list(
+    limit: int = Query(default=100, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
+    sort: str = Query(default="risk_desc", pattern="^(risk_desc|risk_asc|name_asc|event_desc)$"),
+) -> EntityListResponse:
+    records = _entity_store.list_all()
+    # sort
+    if sort == "risk_desc":
+        records.sort(key=lambda r: r.mean_risk, reverse=True)
+    elif sort == "risk_asc":
+        records.sort(key=lambda r: r.mean_risk)
+    elif sort == "name_asc":
+        records.sort(key=lambda r: r.entity_id)
+    elif sort == "event_desc":
+        records.sort(key=lambda r: r.event_count, reverse=True)
+
+    total = len(records)
+    page = records[offset : offset + limit]
+    summaries = [
+        EntitySummary(
+            entity_id=r.entity_id,
+            entity_type=r.entity_type,
+            cohort=r.cohort,
+            event_count=r.event_count,
+            cold_start=r.cold_start,
+            first_seen=r.first_seen,
+            last_seen=r.last_seen,
+            alert_count=r.alert_count,
+            mean_risk=round(r.mean_risk, 2),
+            max_risk=round(max((rs for _, rs, _ in r.risk_timeline), default=0.0), 2),
+        )
+        for r in page
+    ]
+    return EntityListResponse(entities=summaries, total=total)
 
 
 # --------------------------------------------------------------------------- #

@@ -41,6 +41,7 @@ data/*
 artifacts/*
 !data/.gitkeep
 !artifacts/.gitkeep
+!artifacts/eval_results.json
 *.parquet
 *.joblib
 *.pt

@@ -37,6 +37,7 @@ __all__ = [
     "DetectorScores",
     "DriftState",
     "EntityDetailResponse",
+    "EntityListResponse",
     "EntitySummary",
     "FeedbackRequest",
     "FeedbackResponse",
@@ -240,6 +241,14 @@ class EntitySummary(_Model):
     last_seen: UtcDatetime | None = None
     alert_count: int = 0
     mean_risk: float = 0.0
+    max_risk: float = 0.0
+
+
+class EntityListResponse(_Model):
+    """``GET /api/entities``: paginated list of all tracked entities."""
+
+    entities: list[EntitySummary]
+    total: int
 
 
 class AlertDetailResponse(ScoredEvent):

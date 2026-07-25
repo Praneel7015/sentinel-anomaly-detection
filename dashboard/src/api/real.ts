@@ -8,6 +8,7 @@ import type {
   AlertQuery,
   AlertsResponse,
   EntityDetail,
+  EntityListResponse,
   FeedbackRequest,
   FeedbackResponse,
   HealthResponse,
@@ -68,6 +69,15 @@ export const realApi: SentinelApi = {
   getAlerts: (query, signal) => request<AlertsResponse>(`/alerts${queryString(query)}`, { signal }),
 
   getAlert: (eventId, signal) => request<AlertDetail>(`/alerts/${encodeURIComponent(eventId)}`, { signal }),
+
+  listEntities: (params, signal) => {
+    const p = new URLSearchParams()
+    if (params.limit != null) p.set('limit', String(params.limit))
+    if (params.offset != null) p.set('offset', String(params.offset))
+    if (params.sort) p.set('sort', params.sort)
+    const qs = p.toString() ? `?${p}` : ''
+    return request<EntityListResponse>(`/entities${qs}`, { signal })
+  },
 
   getEntity: (entityId, signal) => request<EntityDetail>(`/entities/${encodeURIComponent(entityId)}`, { signal }),
 

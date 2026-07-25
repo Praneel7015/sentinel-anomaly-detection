@@ -11,6 +11,7 @@ import type {
   AlertQuery,
   AlertsResponse,
   EntityDetail,
+  EntityListResponse,
   EntitySummary,
   FeedbackRequest,
   FeedbackResponse,
@@ -262,6 +263,21 @@ export const mockApi: SentinelApi = {
     const detail = buildEntityDetail(entityId)
     if (!detail) return Promise.reject(new Error(`Entity ${entityId} not found`))
     return delay<EntityDetail>(detail, signal, 140)
+  },
+
+  listEntities(params, signal) {
+    const allIds = [...MOCK_DATASET.entityById.keys()]
+    const summaries: EntitySummary[] = allIds.map(entitySummaryFor)
+    const { limit = 100, offset = 0, sort = 'risk_desc' } = params
+    const sorted = [...summaries].sort((a, b) => {
+      if (sort === 'risk_desc') return b.mean_risk - a.mean_risk
+      if (sort === 'risk_asc') return a.mean_risk - b.mean_risk
+      if (sort === 'name_asc') return a.entity_id.localeCompare(b.entity_id)
+      if (sort === 'event_desc') return b.event_count - a.event_count
+      return 0
+    })
+    const page = sorted.slice(offset, offset + limit)
+    return delay<EntityListResponse>({ entities: page, total: allIds.length }, signal, 80)
   },
 
   sendFeedback(body, signal) {

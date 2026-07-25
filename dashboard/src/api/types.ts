@@ -137,6 +137,11 @@ export interface EntitySummary {
   max_risk: number
 }
 
+export interface EntityListResponse {
+  entities: EntitySummary[]
+  total: number
+}
+
 export type AlertDetail = ScoredEvent & {
   entity_summary: EntitySummary
   similar_alerts: ScoredEvent[]
@@ -305,6 +310,7 @@ export interface SentinelApi {
   score(event: Record<string, unknown>, signal?: AbortSignal): Promise<ScoredEvent>
   getAlerts(query: AlertQuery, signal?: AbortSignal): Promise<AlertsResponse>
   getAlert(eventId: string, signal?: AbortSignal): Promise<AlertDetail>
+  listEntities(params: { limit?: number; offset?: number; sort?: string }, signal?: AbortSignal): Promise<EntityListResponse>
   getEntity(entityId: string, signal?: AbortSignal): Promise<EntityDetail>
   sendFeedback(body: FeedbackRequest, signal?: AbortSignal): Promise<FeedbackResponse>
   getMetrics(signal?: AbortSignal): Promise<MetricsResponse>

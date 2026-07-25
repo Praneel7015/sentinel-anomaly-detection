@@ -239,6 +239,11 @@ class EntityStore:
     def all_ids(self) -> list[str]:
         return list(self._records.keys())
 
+    def list_all(self) -> list[_EntityRecord]:
+        """Return a snapshot list of all entity records (copied under lock)."""
+        with self._lock:
+            return list(self._records.values())
+
 
 # --------------------------------------------------------------------------- #
 # StatsTracker

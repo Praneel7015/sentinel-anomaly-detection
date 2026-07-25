@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { SearchX } from 'lucide-react'
+import { RefreshCw, SearchX } from 'lucide-react'
 import { useState } from 'react'
 import {
   Area,
@@ -18,7 +18,8 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { MOCK_DATASET } from '../../api/mockDataset'
+import { useAlerts } from '../../hooks/useAlerts'
+import { useEntities } from '../../hooks/useEntities'
 import { useEntity } from '../../hooks/useEntity'
 import { riskColor } from '../../lib/domain'
 import { absolute, dayHour } from '../../lib/time'
@@ -36,54 +37,106 @@ interface EntityViewProps {
   onOpenAlert: (eventId: string) => void
 }
 
+/* ---------------------------------------------------------------- sidebar */
+
+function EntitySidebar({
+  selectedId,
+  onSelect,
+}: {
+  selectedId: string | null
+  onSelect: (id: string) => void
+}) {
+  const [search, setSearch] = useState('')
+  const [sort, setSort] = useState('risk_desc')
+  const { data, loading, reload } = useEntities(sort, 200)
+
+  const entities = data?.entities ?? []
+  const filtered = search
+    ? entities.filter((e) => e.entity_id.toLowerCase().includes(search.toLowerCase()))
+    : entities
+
+  return (
+    <div className="flex h-full w-72 shrink-0 flex-col border-r border-edge md:w-80">
+      <div className="sticky top-0 z-10 border-b border-edge bg-surface-1 p-3 space-y-2">
+        <div className="flex items-center gap-2">
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search entity…"
+            className="h-9 min-w-0 flex-1 rounded border border-edge-strong bg-surface-2 px-2 text-sm text-ink placeholder:text-ink-faint focus:border-accent/60 focus:outline-none"
+          />
+          <button
+            type="button"
+            onClick={reload}
+            title="Refresh"
+            className="flex h-9 w-9 items-center justify-center rounded border border-edge-strong bg-surface-2 text-ink-faint hover:text-ink transition"
+          >
+            <RefreshCw size={14} />
+          </button>
+        </div>
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          className="h-8 w-full rounded border border-edge-strong bg-surface-2 px-2 text-xs text-ink-dim focus:outline-none"
+        >
+          <option value="risk_desc">Highest risk first</option>
+          <option value="risk_asc">Lowest risk first</option>
+          <option value="name_asc">Name A–Z</option>
+          <option value="event_desc">Most events first</option>
+        </select>
+        <div className="text-xs text-ink-faint">
+          {loading ? 'Loading…' : `${filtered.length} entities`}
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto divide-y divide-edge/60">
+        {filtered.length === 0 && !loading && (
+          <div className="flex flex-col items-center gap-2 py-10 text-center text-xs text-ink-faint px-4">
+            <SearchX size={22} strokeWidth={1.4} />
+            <span>No entities yet. Score some events first.</span>
+          </div>
+        )}
+        {filtered.map((entity) => (
+          <button
+            key={entity.entity_id}
+            type="button"
+            onClick={() => onSelect(entity.entity_id)}
+            className={clsx(
+              'flex w-full min-h-[44px] items-center gap-2 px-3 py-2.5 text-left text-xs transition hover:bg-surface-2',
+              selectedId === entity.entity_id && 'bg-accent/5 border-l-2 border-l-accent',
+            )}
+          >
+            <EntityIcon type={entity.entity_type} size={12} />
+            <span className="min-w-0 flex-1 truncate font-mono text-ink-dim">{entity.entity_id}</span>
+            <div className="shrink-0 flex flex-col items-end gap-0.5">
+              {entity.mean_risk > 0 && (
+                <span
+                  className="tnum font-mono font-semibold text-[11px]"
+                  style={{ color: riskColor(entity.mean_risk) }}
+                >
+                  {entity.mean_risk.toFixed(0)}
+                </span>
+              )}
+              {entity.alert_count > 0 && (
+                <span className="text-[10px] text-ink-faint">{entity.alert_count} alerts</span>
+              )}
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/* --------------------------------------------------------- main component */
+
 export function EntityView({ entityId, onSelectEntity, onOpenAlert }: EntityViewProps) {
   const { data, loading, error, reload } = useEntity(entityId)
-  const [searchTerm, setSearchTerm] = useState('')
-
-  const allEntityIds = [...MOCK_DATASET.entityById.keys()]
-  const filtered = searchTerm
-    ? allEntityIds.filter((id) => id.toLowerCase().includes(searchTerm.toLowerCase()))
-    : allEntityIds
 
   if (!entityId) {
     return (
       <div className="flex h-full">
-        <div className="w-72 shrink-0 overflow-y-auto border-r border-edge md:w-80">
-          <div className="sticky top-0 border-b border-edge bg-surface-1 p-3">
-            <input
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search entity…"
-              className="h-9 w-full rounded border border-edge-strong bg-surface-2 px-2 text-sm text-ink placeholder:text-ink-faint focus:border-accent/60 focus:outline-none"
-            />
-          </div>
-          <div className="divide-y divide-edge/60">
-            {filtered.slice(0, 80).map((id) => {
-              const entity = MOCK_DATASET.entityById.get(id)
-              const events = MOCK_DATASET.byEntity.get(id) ?? []
-              const maxRisk = events.reduce((m, e) => Math.max(m, e.risk_score), 0)
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => onSelectEntity(id)}
-                  className="flex w-full min-h-[44px] items-center gap-2 px-3 py-2.5 text-left text-xs transition hover:bg-surface-2"
-                >
-                  <EntityIcon type={entity?.entity_type ?? 'user'} size={12} />
-                  <span className="min-w-0 flex-1 truncate font-mono text-ink-dim">{id}</span>
-                  {maxRisk > 0 && (
-                    <span
-                      className="tnum shrink-0 font-mono font-semibold"
-                      style={{ color: riskColor(maxRisk) }}
-                    >
-                      {maxRisk.toFixed(0)}
-                    </span>
-                  )}
-                </button>
-              )
-            })}
-          </div>
-        </div>
+        <EntitySidebar selectedId={null} onSelect={onSelectEntity} />
         <div className="flex flex-1 items-center justify-center">
           <EmptyState title="Select an entity" hint="Choose from the list or search by ID" />
         </div>
@@ -93,142 +146,117 @@ export function EntityView({ entityId, onSelectEntity, onOpenAlert }: EntityView
 
   if (error) {
     const is404 = (error as { status?: number }).status === 404
-    if (is404) {
-      return (
-        <div className="flex h-full">
-          <div className="w-72 shrink-0 overflow-y-auto border-r border-edge md:w-80">
-            <div className="sticky top-0 border-b border-edge bg-surface-1 p-3">
-              <input
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search entity…"
-                className="h-9 w-full rounded border border-edge-strong bg-surface-2 px-2 text-sm text-ink placeholder:text-ink-faint focus:border-accent/60 focus:outline-none"
-              />
-            </div>
-            <div className="divide-y divide-edge/60">
-              {filtered.slice(0, 80).map((id) => {
-                const entity = MOCK_DATASET.entityById.get(id)
-                const events = MOCK_DATASET.byEntity.get(id) ?? []
-                const maxRisk = events.reduce((m, e) => Math.max(m, e.risk_score), 0)
-                return (
-                  <button
-                    key={id}
-                    type="button"
-                    onClick={() => onSelectEntity(id)}
-                    className="flex w-full items-center gap-2 px-3 py-2.5 text-left min-h-[44px] text-xs transition hover:bg-surface-2"
-                  >
-                    <EntityIcon type={entity?.entity_type ?? 'user'} size={13} />
-                    <span className="min-w-0 flex-1 truncate font-mono text-ink-dim">{id}</span>
-                    {maxRisk > 0 && (
-                      <RiskScore score={maxRisk} className="text-xs shrink-0" />
-                    )}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-          <div className="flex flex-1 items-center justify-center">
+    return (
+      <div className="flex h-full">
+        <EntitySidebar selectedId={entityId} onSelect={onSelectEntity} />
+        <div className="flex flex-1 items-center justify-center">
+          {is404 ? (
             <EmptyState
               icon={<SearchX size={26} strokeWidth={1.4} />}
               title="Entity not in live store yet"
-              hint="This entity will appear once events flow through the stream. Try selecting a mock entity from the list, or start the stream replay on the Triage tab."
+              hint="This entity will appear once its events flow through the stream."
             />
-          </div>
-        </div>
-      )
-    }
-    return <ErrorState error={error} onRetry={reload} />
-  }
-
-  return (
-    <div className="flex h-full min-h-0 flex-col overflow-y-auto">
-      <div className="shrink-0 border-b border-edge bg-surface-1 px-4 py-3">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => onSelectEntity(null)}
-            className="text-2xs text-ink-faint hover:text-ink-dim transition"
-          >
-            ← Back
-          </button>
-          {data && (
-            <div className="flex flex-wrap items-center gap-2">
-              <EntityIcon type={data.entity_type} size={16} />
-              <span className="font-mono text-sm font-semibold text-ink">{data.entity_id}</span>
-              <span className="chip border-edge-strong bg-surface-2 text-ink-dim">{data.entity_type}</span>
-              <span className="chip border-edge-strong bg-surface-2 text-ink-dim">{data.cohort}</span>
-              {data.cold_start && (
-                <span className="chip border-sky-400/30 bg-sky-400/10 text-sky-300">❄ cold-start</span>
-              )}
-              {data.drift_state.drifting && (
-                <span className="chip border-risk-medium/30 bg-risk-medium/10 text-risk-medium">
-                  ⚡ drifting
-                </span>
-              )}
-            </div>
+          ) : (
+            <ErrorState error={error} onRetry={reload} />
           )}
         </div>
       </div>
+    )
+  }
 
-      {loading && !data ? (
-        <EntitySkeleton />
-      ) : data ? (
-        <div className="flex flex-col gap-4 p-4 md:p-6">
-          {data.drift_state.drifting && (
-            <DriftBanner
-              detectedAt={data.drift_state.detected_at}
-              adapted={data.drift_state.adapted}
-            />
-          )}
+  return (
+    <div className="flex h-full">
+      <EntitySidebar selectedId={entityId} onSelect={onSelectEntity} />
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Panel title="Profile vs cohort">
-              <div className="divide-y divide-edge/60">
-                {data.profile_summary.map((row) => (
-                  <div key={row.label} className="flex items-center justify-between gap-3 py-1.5 text-2xs">
-                    <span className="text-ink-faint">{row.label}</span>
-                    <div className="flex items-center gap-3">
-                      <span className="font-mono font-semibold text-ink">{row.value}</span>
-                      <span className="text-ink-faint/70">cohort: {row.cohort_value}</span>
+      <div className="flex flex-1 min-h-0 flex-col overflow-y-auto">
+        {/* header */}
+        <div className="shrink-0 border-b border-edge bg-surface-1 px-4 py-3">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => onSelectEntity(null)}
+              className="text-2xs text-ink-faint hover:text-ink-dim transition"
+            >
+              ← Back
+            </button>
+            {data && (
+              <div className="flex flex-wrap items-center gap-2">
+                <EntityIcon type={data.entity_type} size={16} />
+                <span className="font-mono text-sm font-semibold text-ink">{data.entity_id}</span>
+                <span className="chip border-edge-strong bg-surface-2 text-ink-dim">{data.entity_type}</span>
+                <span className="chip border-edge-strong bg-surface-2 text-ink-dim">{data.cohort}</span>
+                {data.cold_start && (
+                  <span className="chip border-sky-400/30 bg-sky-400/10 text-sky-300">❄ cold-start</span>
+                )}
+                {data.drift_state.drifting && (
+                  <span className="chip border-risk-medium/30 bg-risk-medium/10 text-risk-medium">
+                    ⚡ drifting
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {loading && !data ? (
+          <EntitySkeleton />
+        ) : data ? (
+          <div className="flex flex-col gap-4 p-4 md:p-6">
+            {data.drift_state.drifting && (
+              <DriftBanner
+                detectedAt={data.drift_state.detected_at}
+                adapted={data.drift_state.adapted}
+              />
+            )}
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <Panel title="Profile vs cohort">
+                <div className="divide-y divide-edge/60">
+                  {data.profile_summary.map((row) => (
+                    <div key={row.label} className="flex items-center justify-between gap-3 py-1.5 text-2xs">
+                      <span className="text-ink-faint">{row.label}</span>
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono font-semibold text-ink">{row.value}</span>
+                        <span className="text-ink-faint/70">cohort: {row.cohort_value}</span>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-2 grid grid-cols-2 gap-2 text-2xs text-ink-faint">
-                <div>First seen: <span className="font-mono text-ink-dim">{absolute(data.first_seen)}</span></div>
-                <div>Last seen: <span className="font-mono text-ink-dim">{absolute(data.last_seen)}</span></div>
-                <div>Events: <span className="font-mono text-ink-dim">{data.event_count.toLocaleString()}</span></div>
-              </div>
+                  ))}
+                </div>
+                <div className="mt-2 grid grid-cols-2 gap-2 text-2xs text-ink-faint">
+                  <div>First seen: <span className="font-mono text-ink-dim">{absolute(data.first_seen)}</span></div>
+                  <div>Last seen: <span className="font-mono text-ink-dim">{absolute(data.last_seen)}</span></div>
+                  <div>Events: <span className="font-mono text-ink-dim">{data.event_count.toLocaleString()}</span></div>
+                </div>
+              </Panel>
+
+              <Panel title="Peer comparison">
+                <PeerRadar axes={data.peer_comparison} />
+              </Panel>
+            </div>
+
+            <Panel title="Risk over time" subtitle={`${data.risk_timeline.length} events`}>
+              <RiskTimeline points={data.risk_timeline} />
             </Panel>
 
-            <Panel title="Peer comparison">
-              <PeerRadar axes={data.peer_comparison} />
+            <Panel title="Activity by hour (24h profile)">
+              <ActivityHistogram buckets={data.activity_by_hour} />
+            </Panel>
+
+            <Panel title="Top resources" subtitle="new = not in enrolled baseline">
+              <TopResources resources={data.top_resources} />
+            </Panel>
+
+            <Panel title="Recent alerts for this entity">
+              <LiveRecentAlerts entityId={entityId} onOpenAlert={onOpenAlert} />
             </Panel>
           </div>
-
-          <Panel title="Risk over time" subtitle={`${data.risk_timeline.length} events`}>
-            <RiskTimeline points={data.risk_timeline} />
-          </Panel>
-
-          <Panel title="Activity by hour (24h profile)">
-            <ActivityHistogram buckets={data.activity_by_hour} />
-          </Panel>
-
-          <Panel title="Top resources" subtitle="new = not in enrolled baseline">
-            <TopResources resources={data.top_resources} />
-          </Panel>
-
-          <Panel title="Recent alerts">
-            <RecentAlerts entityId={entityId} onOpenAlert={onOpenAlert} />
-          </Panel>
-        </div>
-      ) : null}
+        ) : null}
+      </div>
     </div>
   )
 }
 
-function DriftBanner({ detectedAt, adapted }: { detectedAt: string | null; adapted: boolean }) {
-  return (
+function DriftBanner({ detectedAt, adapted }: { detectedAt: string | null; adapted: boolean }) {  return (
     <div className="rounded border border-risk-medium/40 bg-risk-medium/10 px-4 py-3 text-sm text-risk-medium">
       <div className="font-semibold">⚡ Sustained behavioural drift detected</div>
       <div className="mt-1 text-xs text-risk-medium/80">
@@ -369,24 +397,24 @@ function TopResources({
   )
 }
 
-function RecentAlerts({
+function LiveRecentAlerts({
   entityId,
   onOpenAlert,
 }: {
   entityId: string
   onOpenAlert: (id: string) => void
 }) {
-  const events = (MOCK_DATASET.byEntity.get(entityId) ?? [])
-    .filter((e) => e.is_alert)
-    .slice(0, 8)
+  const { data, loading } = useAlerts({ entity_id: entityId, limit: 8, sort: 'risk_desc' })
+  const alerts = data?.alerts.filter((e) => e.is_alert) ?? []
 
-  if (events.length === 0) {
+  if (loading) return <SkeletonChart className="h-24" />
+  if (alerts.length === 0) {
     return <p className="text-2xs text-ink-faint">No alerts for this entity in the current window</p>
   }
 
   return (
     <div className="space-y-1">
-      {events.map((a) => (
+      {alerts.map((a) => (
         <button
           key={a.event_id}
           type="button"

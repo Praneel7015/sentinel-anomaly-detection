@@ -3,6 +3,7 @@ import { TopBar } from './components/layout/TopBar'
 import { EntityView } from './components/entity/EntityView'
 import { OpsView } from './components/ops/OpsView'
 import { TriageView } from './components/triage/TriageView'
+import { ErrorBoundary } from './components/ui/ErrorBoundary'
 import { StreamProvider } from './hooks/useStream'
 import type { ViewId } from './views'
 
@@ -49,18 +50,26 @@ export default function App() {
         <TopBar view={view} onNavigate={setView} theme={theme} onToggleTheme={toggleTheme} />
         <main className="min-h-0 flex-1 overflow-hidden">
           {view === 'triage' && (
-            <TriageView
-              budgetPct={budgetPct}
-              onBudgetChange={setBudgetPct}
-              onOpenEntity={openEntity}
-              focusEventId={focusEventId}
-              onFocusConsumed={() => setFocusEventId(null)}
-            />
+            <ErrorBoundary key="triage">
+              <TriageView
+                budgetPct={budgetPct}
+                onBudgetChange={setBudgetPct}
+                onOpenEntity={openEntity}
+                focusEventId={focusEventId}
+                onFocusConsumed={() => setFocusEventId(null)}
+              />
+            </ErrorBoundary>
           )}
           {view === 'entity' && (
-            <EntityView entityId={entityId} onSelectEntity={setEntityId} onOpenAlert={openAlert} />
+            <ErrorBoundary key="entity">
+              <EntityView entityId={entityId} onSelectEntity={setEntityId} onOpenAlert={openAlert} />
+            </ErrorBoundary>
           )}
-          {view === 'ops' && <OpsView budgetPct={budgetPct} onBudgetChange={setBudgetPct} />}
+          {view === 'ops' && (
+            <ErrorBoundary key="ops">
+              <OpsView budgetPct={budgetPct} onBudgetChange={setBudgetPct} />
+            </ErrorBoundary>
+          )}
         </main>
       </div>
     </StreamProvider>
