@@ -7,7 +7,7 @@ name = "sentinel"
 version = "0.1.0"
 description = "SENTINEL - explainable behavioural anomaly detection over access logs"
 readme = "README.md"
-requires-python = ">=3.12,<3.13"
+requires-python = ">=3.12"
 license = { text = "MIT" }
 dependencies = [
     "numpy",
