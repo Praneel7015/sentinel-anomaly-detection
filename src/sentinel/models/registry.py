@@ -126,8 +126,13 @@ class ModelRegistry:
 
         logger.info("All detectors fitted.")
 
-    def _fit_fusion_quantiles(self, feature_df: pd.DataFrame) -> None:
-        """Score all training events through each detector to calibrate quantiles."""
+    def _fit_fusion_quantiles(self, feature_df: pd.DataFrame, max_sample: int = 5000) -> None:
+        """Score a sample of training events through each detector to calibrate quantiles.
+
+        Args:
+            max_sample: Maximum number of rows to score (sampled randomly).
+                        Quantile estimation stabilises well before 5000 samples.
+        """
         profile_scores: list[float] = []
         isolation_scores: list[float] = []
         markov_scores: list[float] = []
@@ -138,6 +143,9 @@ class ModelRegistry:
             if "split" in feature_df.columns
             else feature_df
         )
+
+        if len(train_df) > max_sample:
+            train_df = train_df.sample(n=max_sample, random_state=42)
 
         for row in train_df.itertuples(index=False):
             vals = [float(getattr(row, fname, 0.0)) for fname in FEATURE_NAMES]

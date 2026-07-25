@@ -172,14 +172,59 @@ def train(
 
 @app.command("eval")
 def evaluate(
-    config: MODEL_CONFIG_OPT = DEFAULT_MODEL_CONFIG,
     data_dir: DATA_DIR_OPT = Path("data"),
     artifacts: ARTIFACTS_OPT = Path("artifacts"),
     reports: REPORTS_OPT = Path("reports"),
-    split: Annotated[str, typer.Option("--split", help="Which split to evaluate.")] = "test",
+    max_train: Annotated[
+        int, typer.Option("--max-train", help="Cap train events for faster eval (0 = all).")
+    ] = 50_000,
+    max_val: Annotated[
+        int, typer.Option("--max-val", help="Cap val events (0 = all).")
+    ] = 10_000,
+    max_test: Annotated[
+        int, typer.Option("--max-test", help="Cap test events (0 = all).")
+    ] = 30_000,
 ) -> None:
-    """Score a split and write PR-AUC, budget curves, per-attack recall and plots."""
-    _not_implemented("eval", f"would evaluate split={split} from {data_dir} into {reports}")
+    """Train on the train split, calibrate on val, score on test, write metrics + plots."""
+    import logging
+
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
+
+    events_path = data_dir / "events.parquet"
+    if not events_path.exists():
+        console.print(
+            f"[bold red]sentinel eval[/]: {events_path} not found.\n"
+            "Run [bold]sentinel gen[/] first to generate the synthetic dataset."
+        )
+        raise typer.Exit(code=1)
+
+    from sentinel.eval.run_eval import run_eval
+
+    console.print("[bold green]sentinel eval[/]: starting evaluation pipeline…")
+    results = run_eval(
+        data_dir=data_dir,
+        artifacts_dir=artifacts,
+        reports_dir=reports,
+        max_train_events=max_train or None,
+        max_val_events=max_val or None,
+        max_test_events=max_test or None,
+    )
+
+    console.print(f"\n[bold]Results[/]")
+    console.print(f"  PR-AUC        = {results['pr_auc']:.4f}")
+    console.print(f"  ROC-AUC       = {results['roc_auc']:.4f}")
+    console.print(f"  Anomaly rate  = {results['anomaly_rate_pct']:.2f}%  ({results['n_test_anomalies']:,} / {results['n_test_events']:,})")
+    console.print(f"\n  Alert-budget precision/recall:")
+    for b in results["budget_curve"]:
+        console.print(
+            f"    @{b['budget_pct']:.1f}%  P={b['precision']:.3f}  R={b['recall']:.3f}  "
+            f"({b['alerts']:,} alerts, {b['analyst_hours']:.1f}h analyst)"
+        )
+    lat = results["latency_ms"]
+    console.print(f"\n  Latency  p50={lat['p50']:.1f}ms  p95={lat['p95']:.1f}ms  p99={lat['p99']:.1f}ms")
+    console.print(f"\n  FP rate — confounders={results['fp_rate_confounders']:.3f}  insider_drift={results['fp_rate_insider_drift']:.3f}")
+    console.print(f"\n  Plots -> {reports}/")
+    console.print(f"  JSON  -> {artifacts}/eval_results.json")
 
 
 @app.command()

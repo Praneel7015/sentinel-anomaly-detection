@@ -60,6 +60,9 @@ def score_event(
     # --- Normalise event to dict ---
     if hasattr(event, "model_dump"):
         event_dict = event.model_dump()
+    elif hasattr(event, "to_dict") and hasattr(event, "iloc"):
+        # pd.Series from a DataFrame row
+        event_dict = event.to_dict()
     elif hasattr(event, "__dict__"):
         event_dict = vars(event)
     else:
