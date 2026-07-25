@@ -293,6 +293,7 @@ _CORS_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:4173",
     "https://sentinel-soc.vercel.app",
+    "https://sentinel-anomaly-detection-phi.vercel.app",
     *[o.strip() for o in os.environ.get("SENTINEL_CORS_ORIGINS", "").split(",") if o.strip()],
 ]
 

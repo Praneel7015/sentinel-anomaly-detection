@@ -14,7 +14,7 @@ import {
 } from 'recharts'
 import { useMetrics } from '../../hooks/useMetrics'
 import { formatPct } from '../../lib/domain'
-import { AXIS, ChartTooltip, GRID } from '../ui/ChartKit'
+import { AXIS, ChartTooltip, GRID, getChartTheme } from '../ui/ChartKit'
 import { Slider } from '../ui/Controls'
 import { Panel } from '../ui/Panel'
 import { SkeletonChart } from '../ui/Skeleton'
@@ -187,18 +187,21 @@ function BudgetCurve({
   data: { budget_pct: number; precision: number; recall: number; alerts: number; analyst_hours: number }[]
   currentBudget: number
 }) {
+  const ct = getChartTheme()
   return (
     <ResponsiveContainer width="100%" height={220}>
       <LineChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
-        <CartesianGrid {...GRID} />
+        <CartesianGrid {...GRID} stroke={ct.grid} />
         <XAxis
           dataKey="budget_pct"
           {...AXIS}
+          tick={{ fontSize: 10, fill: ct.text }}
+          axisLine={{ stroke: ct.axis }}
           tickFormatter={(v: number) => `${v}%`}
-          label={{ value: 'Alert budget %', position: 'insideBottom', offset: -4, fill: '#5d6879', fontSize: 10 }}
+          label={{ value: 'Alert budget %', position: 'insideBottom', offset: -4, fill: ct.text, fontSize: 10 }}
         />
-        <YAxis domain={[0, 1]} {...AXIS} width={32} tickFormatter={(v: number) => `${(v * 100).toFixed(0)}%`} />
-        <ReferenceLine x={currentBudget} stroke="#22d3ee" strokeDasharray="3 3" strokeOpacity={0.7} label={{ value: 'current', fill: '#22d3ee', fontSize: 9 }} />
+        <YAxis domain={[0, 1]} {...AXIS} tick={{ fontSize: 10, fill: ct.text }} axisLine={{ stroke: ct.axis }} width={32} tickFormatter={(v: number) => `${(v * 100).toFixed(0)}%`} />
+        <ReferenceLine x={currentBudget} stroke="rgb(var(--accent))" strokeDasharray="3 3" strokeOpacity={0.7} label={{ value: 'current', fill: 'rgb(var(--accent))', fontSize: 9 }} />
         <Tooltip
           content={
             <ChartTooltip
@@ -206,8 +209,8 @@ function BudgetCurve({
             />
           }
         />
-        <Line dataKey="precision" stroke="#22d3ee" strokeWidth={2} dot={false} name="Precision" />
-        <Line dataKey="recall" stroke="#f97316" strokeWidth={2} dot={false} name="Recall" strokeDasharray="4 2" />
+        <Line dataKey="precision" stroke="rgb(var(--accent))" strokeWidth={2} dot={false} name="Precision" />
+        <Line dataKey="recall" stroke="#ea580c" strokeWidth={2} dot={false} name="Recall" strokeDasharray="4 2" />
       </LineChart>
     </ResponsiveContainer>
   )
@@ -222,18 +225,21 @@ function PrCurve({
   points: { recall: number; precision: number }[]
   prAuc: number
 }) {
+  const ct = getChartTheme()
   return (
     <div>
       <ResponsiveContainer width="100%" height={200}>
         <LineChart data={points} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
-          <CartesianGrid {...GRID} />
+          <CartesianGrid {...GRID} stroke={ct.grid} />
           <XAxis
             dataKey="recall"
             {...AXIS}
+            tick={{ fontSize: 10, fill: ct.text }}
+            axisLine={{ stroke: ct.axis }}
             tickFormatter={(v: number) => v.toFixed(1)}
-            label={{ value: 'Recall', position: 'insideBottom', offset: -4, fill: '#5d6879', fontSize: 10 }}
+            label={{ value: 'Recall', position: 'insideBottom', offset: -4, fill: ct.text, fontSize: 10 }}
           />
-          <YAxis domain={[0, 1]} {...AXIS} width={32} tickFormatter={(v: number) => `${(v * 100).toFixed(0)}%`} />
+          <YAxis domain={[0, 1]} {...AXIS} tick={{ fontSize: 10, fill: ct.text }} axisLine={{ stroke: ct.axis }} width={32} tickFormatter={(v: number) => `${(v * 100).toFixed(0)}%`} />
           <Tooltip
             content={
               <ChartTooltip
@@ -243,7 +249,7 @@ function PrCurve({
           />
           <Line
             dataKey="precision"
-            stroke="#22d3ee"
+            stroke="rgb(var(--accent))"
             strokeWidth={2}
             dot={false}
             name="Precision"
@@ -265,6 +271,7 @@ function PerAttackRecallChart({
   data: { attack_type: string; recall: number; support: number; detected: number }[]
 }) {
   const sorted = [...data].sort((a, b) => b.recall - a.recall)
+  const ct = getChartTheme()
 
   return (
     <div>
@@ -274,18 +281,20 @@ function PerAttackRecallChart({
           layout="vertical"
           margin={{ top: 4, right: 8, bottom: 0, left: 0 }}
         >
-          <CartesianGrid {...GRID} horizontal={false} />
+          <CartesianGrid {...GRID} stroke={ct.grid} horizontal={false} />
           <XAxis
             type="number"
             domain={[0, 1]}
             {...AXIS}
+            tick={{ fontSize: 10, fill: ct.text }}
+            axisLine={{ stroke: ct.axis }}
             tickFormatter={(v: number) => `${(v * 100).toFixed(0)}%`}
           />
           <YAxis
             type="category"
             dataKey="attack_type"
             width={120}
-            tick={{ fontSize: 9, fill: '#98a3b5' }}
+            tick={{ fontSize: 9, fill: ct.text }}
             tickLine={false}
             axisLine={false}
           />
@@ -300,7 +309,7 @@ function PerAttackRecallChart({
             {sorted.map((entry, i) => (
               <Cell
                 key={`cell-${i}`}
-                fill={entry.recall > 0.85 ? '#22c55e' : entry.recall > 0.7 ? '#f97316' : '#ef4444'}
+                fill={entry.recall > 0.85 ? '#16a34a' : entry.recall > 0.7 ? '#ea580c' : '#dc2626'}
                 fillOpacity={0.85}
               />
             ))}
@@ -492,7 +501,7 @@ function ConfusionMatrix({
                     className="w-12 py-0.5 px-0.5 text-center font-mono"
                     style={{
                       background: bg,
-                      color: isDiag ? '#22d3ee' : val > 0 ? '#e6ebf2' : '#5d6879',
+                      color: isDiag ? 'rgb(var(--accent))' : val > 0 ? 'rgb(var(--ink))' : 'rgb(var(--ink-faint))',
                     }}
                   >
                     {val}

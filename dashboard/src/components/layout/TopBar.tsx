@@ -1,8 +1,9 @@
 import clsx from 'clsx'
-import { Activity, Cpu, Radar, ShieldAlert, Zap } from 'lucide-react'
+import { Activity, Cpu, Moon, Radar, ShieldAlert, Sun, Zap } from 'lucide-react'
 import { USE_MOCK } from '../../api/client'
 import { useStream } from '../../hooks/useStream'
 import { formatCompact, formatDuration } from '../../lib/domain'
+import type { Theme } from '../../App'
 import type { ViewId } from '../../views'
 import { VIEWS } from '../../views'
 
@@ -18,7 +19,14 @@ function Counter({ icon, label, value, tone }: { icon: React.ReactNode; label: s
   )
 }
 
-export function TopBar({ view, onNavigate }: { view: ViewId; onNavigate: (view: ViewId) => void }) {
+interface TopBarProps {
+  view: ViewId
+  onNavigate: (view: ViewId) => void
+  theme: Theme
+  onToggleTheme: () => void
+}
+
+export function TopBar({ view, onNavigate, theme, onToggleTheme }: TopBarProps) {
   const { health, stats, connection } = useStream()
 
   const healthy = health?.status === 'ok'
@@ -26,6 +34,7 @@ export function TopBar({ view, onNavigate }: { view: ViewId; onNavigate: (view: 
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-4 border-b border-edge bg-surface-1 pl-4 pr-3">
+      {/* Logo */}
       <div className="flex items-center gap-2.5">
         <div className="relative flex h-8 w-8 items-center justify-center rounded bg-accent/10 ring-1 ring-inset ring-accent/30">
           <Radar size={17} className="text-accent" />
@@ -38,6 +47,7 @@ export function TopBar({ view, onNavigate }: { view: ViewId; onNavigate: (view: 
         </div>
       </div>
 
+      {/* Nav */}
       <nav className="ml-2 flex items-center gap-0.5 rounded border border-edge bg-surface-0 p-0.5">
         {VIEWS.map((v) => (
           <button
@@ -46,7 +56,9 @@ export function TopBar({ view, onNavigate }: { view: ViewId; onNavigate: (view: 
             onClick={() => onNavigate(v.id)}
             className={clsx(
               'inline-flex items-center gap-1.5 rounded px-2.5 py-1.5 text-xs font-medium transition',
-              view === v.id ? 'bg-surface-3 text-ink shadow-sm' : 'text-ink-dim hover:text-ink',
+              view === v.id
+                ? 'bg-accent text-white shadow-sm'
+                : 'text-ink-dim hover:bg-surface-2 hover:text-ink',
             )}
           >
             <v.icon size={13} />
@@ -55,6 +67,7 @@ export function TopBar({ view, onNavigate }: { view: ViewId; onNavigate: (view: 
         ))}
       </nav>
 
+      {/* Stats */}
       <div className="ml-auto flex items-center">
         <Counter
           icon={<Activity size={14} />}
@@ -80,6 +93,7 @@ export function TopBar({ view, onNavigate }: { view: ViewId; onNavigate: (view: 
         />
       </div>
 
+      {/* Status pill */}
       <div
         className="flex items-center gap-2 rounded border border-edge bg-surface-0 px-2.5 py-1.5"
         title={
@@ -94,6 +108,17 @@ export function TopBar({ view, onNavigate }: { view: ViewId; onNavigate: (view: 
           <div className="text-[0.625rem] text-ink-faint">{health ? `v${health.version}` : 'offline'}</div>
         </div>
       </div>
+
+      {/* Theme toggle */}
+      <button
+        type="button"
+        onClick={onToggleTheme}
+        className="flex h-8 w-8 items-center justify-center rounded border border-edge bg-surface-0 text-ink-faint transition hover:bg-surface-2 hover:text-ink"
+        title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+        aria-label="Toggle theme"
+      >
+        {theme === 'light' ? <Moon size={15} /> : <Sun size={15} />}
+      </button>
     </header>
   )
 }

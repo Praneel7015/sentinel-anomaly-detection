@@ -19,7 +19,7 @@ import type { AlertDetail as AlertDetailType, Contribution, ScoredEvent, Verdict
 import { DETECTOR_LABEL, RISK_COLOR, bandForScore, riskColor } from '../../lib/domain'
 import { absolute, relative } from '../../lib/time'
 import { AttackChip, Chip } from '../ui/Chip'
-import { GRID, ChartTooltip } from '../ui/ChartKit'
+import { GRID, ChartTooltip, getChartTheme } from '../ui/ChartKit'
 import { Button } from '../ui/Controls'
 import { EntityIcon } from '../ui/EntityIcon'
 import { Panel } from '../ui/Panel'
@@ -109,10 +109,10 @@ function DetailHeader({
                 <AttackChip type={detail.predicted_attack_type} />
                 <RiskBandBadge score={detail.risk_score} />
                 {detail.cold_start && (
-                  <Chip className="border-sky-400/30 bg-sky-400/10 text-sky-300">❄ cold-start</Chip>
+                  <Chip className="border-sky-500/30 bg-sky-500/10 text-sky-600 dark:border-sky-400/30 dark:bg-sky-400/10 dark:text-sky-300">cold-start</Chip>
                 )}
                 {detail.is_novel && (
-                  <Chip className="border-purple-400/30 bg-purple-400/10 text-purple-300">✦ novel</Chip>
+                  <Chip className="border-purple-500/30 bg-purple-500/10 text-purple-600 dark:border-purple-400/30 dark:bg-purple-400/10 dark:text-purple-300">novel</Chip>
                 )}
               </div>
               <div className="mt-0.5 flex items-center gap-3 text-2xs text-ink-faint">
@@ -391,17 +391,19 @@ function DetectorRadar({ scores }: { scores: ScoredEvent['detector_scores'] }) {
       fullMark: 100,
     }))
 
+  const ct = getChartTheme()
+
   return (
     <div className="flex flex-col items-center">
       <ResponsiveContainer width="100%" height={200}>
         <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
-          <PolarGrid stroke="#232936" />
-          <PolarAngleAxis dataKey="subject" tick={{ fontSize: 10, fill: '#98a3b5' }} />
+          <PolarGrid stroke={ct.grid} />
+          <PolarAngleAxis dataKey="subject" tick={{ fontSize: 10, fill: ct.text }} />
           <Radar
             name="Score"
             dataKey="value"
-            stroke="#22d3ee"
-            fill="#22d3ee"
+            stroke="rgb(var(--accent))"
+            fill="rgb(var(--accent))"
             fillOpacity={0.18}
             strokeWidth={1.5}
           />
@@ -539,25 +541,27 @@ export function ContributionBarChart({ contributions }: { contributions: Contrib
     .map((c) => ({
       name: c.display_name,
       value: c.contribution,
-      color: c.contribution >= 0 ? '#f97316' : '#22c55e',
+      color: c.contribution >= 0 ? '#ea580c' : '#16a34a',
     }))
+
+  const ct = getChartTheme()
 
   return (
     <ResponsiveContainer width="100%" height={220}>
       <BarChart data={data} layout="vertical" margin={{ left: 0, right: 40, top: 4, bottom: 4 }}>
-        <CartesianGrid {...GRID} horizontal={false} />
+        <CartesianGrid {...GRID} stroke={ct.grid} horizontal={false} />
         <XAxis
           type="number"
           domain={['dataMin', 'dataMax']}
-          tick={{ fontSize: 10, fill: '#5d6879' }}
-          axisLine={{ stroke: '#232936' }}
+          tick={{ fontSize: 10, fill: ct.text }}
+          axisLine={{ stroke: ct.axis }}
           tickLine={false}
         />
         <YAxis
           type="category"
           dataKey="name"
           width={140}
-          tick={{ fontSize: 10, fill: '#98a3b5' }}
+          tick={{ fontSize: 10, fill: ct.text }}
           tickLine={false}
           axisLine={false}
         />

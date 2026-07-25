@@ -1,40 +1,42 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        // Layered near-black surfaces, darkest at the back.
+        // All surfaces, edges, and ink tokens are CSS-variable-backed so
+        // swapping the `.dark` class on <html> switches the full palette.
         surface: {
-          0: '#0a0c10',
-          1: '#12151c',
-          2: '#1a1f29',
-          3: '#232936',
-          4: '#2d3442',
+          0: 'rgb(var(--surface-0) / <alpha-value>)',
+          1: 'rgb(var(--surface-1) / <alpha-value>)',
+          2: 'rgb(var(--surface-2) / <alpha-value>)',
+          3: 'rgb(var(--surface-3) / <alpha-value>)',
+          4: 'rgb(var(--surface-4) / <alpha-value>)',
         },
         edge: {
-          DEFAULT: '#232936',
-          strong: '#333c4d',
+          DEFAULT: 'rgb(var(--edge) / <alpha-value>)',
+          strong: 'rgb(var(--edge-strong) / <alpha-value>)',
         },
         ink: {
-          DEFAULT: '#e6ebf2',
-          dim: '#98a3b5',
-          faint: '#5d6879',
+          DEFAULT: 'rgb(var(--ink) / <alpha-value>)',
+          dim: 'rgb(var(--ink-dim) / <alpha-value>)',
+          faint: 'rgb(var(--ink-faint) / <alpha-value>)',
         },
         accent: {
-          DEFAULT: '#22d3ee',
-          dim: '#0e7490',
-          glow: '#67e8f9',
+          DEFAULT: 'rgb(var(--accent) / <alpha-value>)',
+          dim: 'rgb(var(--accent-dim) / <alpha-value>)',
+          glow: 'rgb(var(--accent-glow) / <alpha-value>)',
         },
         amber: {
           DEFAULT: '#f5a524',
         },
-        // Deliberate risk ramp - the single source of truth for risk colour.
+        // Risk ramp stays hardcoded — it's semantic and fixed across themes.
         risk: {
-          low: '#22c55e',
-          medium: '#eab308',
-          high: '#f97316',
-          critical: '#ef4444',
+          low: '#16a34a',
+          medium: '#d97706',
+          high: '#ea580c',
+          critical: '#dc2626',
         },
       },
       fontFamily: {

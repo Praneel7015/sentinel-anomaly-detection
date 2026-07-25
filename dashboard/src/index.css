@@ -3,8 +3,59 @@
 @tailwind utilities;
 
 @layer base {
+  /* ── Light theme (default) ───────────────────────────────────────────── */
   :root {
+    color-scheme: light;
+
+    /* Surfaces: white → warm-gray hierarchy */
+    --surface-0: 255 255 255;
+    --surface-1: 248 250 252;
+    --surface-2: 241 245 249;
+    --surface-3: 226 232 240;
+    --surface-4: 203 213 225;
+
+    /* Borders */
+    --edge: 226 232 240;
+    --edge-strong: 148 163 184;
+
+    /* Text */
+    --ink: 15 23 42;
+    --ink-dim: 51 65 85;
+    --ink-faint: 100 116 139;
+
+    /* Accent: sky-600 — readable on white, professional */
+    --accent: 2 132 199;
+    --accent-dim: 3 105 161;
+    --accent-glow: 56 189 248;
+
+    /* Recharts */
+    --chart-grid: 226 232 240;
+    --chart-text: 100 116 139;
+  }
+
+  /* ── Dark theme ──────────────────────────────────────────────────────── */
+  .dark {
     color-scheme: dark;
+
+    --surface-0: 10 12 16;
+    --surface-1: 18 21 28;
+    --surface-2: 26 31 41;
+    --surface-3: 35 41 54;
+    --surface-4: 45 52 66;
+
+    --edge: 35 41 54;
+    --edge-strong: 51 60 77;
+
+    --ink: 230 235 242;
+    --ink-dim: 152 163 181;
+    --ink-faint: 93 104 121;
+
+    --accent: 34 211 238;
+    --accent-dim: 14 116 144;
+    --accent-glow: 103 232 249;
+
+    --chart-grid: 35 41 54;
+    --chart-text: 152 163 181;
   }
 
   html,
@@ -69,15 +120,20 @@
   }
 }
 
-/* Recharts overrides so charts inherit the console aesthetic. */
+/* Recharts: use CSS variable colours so charts respect theme */
 .recharts-cartesian-grid line {
-  stroke: #232936;
+  stroke: rgb(var(--chart-grid));
 }
 
 .recharts-text {
-  fill: #98a3b5;
+  fill: rgb(var(--chart-text));
 }
 
 .recharts-surface {
   overflow: visible;
+}
+
+.recharts-polar-grid-angle line,
+.recharts-polar-grid-concentric-polygon {
+  stroke: rgb(var(--chart-grid)) !important;
 }
