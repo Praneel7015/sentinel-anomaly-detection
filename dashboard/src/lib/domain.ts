@@ -184,6 +184,31 @@ export function formatDuration(seconds: number): string {
   return `${rem}s`
 }
 
+/**
+ * Approximate the risk threshold that corresponds to alerting on `budgetPct`%
+ * of events. Mirrors the backend's `_alert_threshold` helper.
+ * Used to visually shade which rows in the queue are "within budget".
+ */
+export function thresholdForBudget(budgetPct: number): number {
+  // Linear interpolation between known calibration points
+  const points: [number, number][] = [
+    [0.1, 80],
+    [0.5, 65],
+    [1.0, 50],
+    [2.0, 40],
+    [5.0, 25],
+  ]
+  for (let i = 0; i < points.length - 1; i++) {
+    const [x0, y0] = points[i]
+    const [x1, y1] = points[i + 1]
+    if (budgetPct >= x0 && budgetPct <= x1) {
+      const t = (budgetPct - x0) / (x1 - x0)
+      return y0 + t * (y1 - y0)
+    }
+  }
+  return budgetPct < points[0][0] ? points[0][1] : points[points.length - 1][1]
+}
+
 export const DETECTOR_LABEL: Record<string, string> = {
   profile: 'Profile',
   isolation: 'Isolation',
