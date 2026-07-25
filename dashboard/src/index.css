@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-surface-0 text-ink font-sans antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'tnum';
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-surface-3;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-surface-4;
+    background-clip: content-box;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-1 ring-accent/70;
+  }
+}
+
+@layer components {
+  .panel {
+    @apply rounded-md border border-edge bg-surface-1;
+  }
+
+  .panel-header {
+    @apply flex items-center justify-between gap-2 border-b border-edge px-3 py-2;
+  }
+
+  .panel-title {
+    @apply text-2xs font-semibold uppercase tracking-[0.14em] text-ink-dim;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-2xs font-medium leading-none;
+  }
+
+  .kbd {
+    @apply inline-flex min-w-[1.1rem] items-center justify-center rounded border border-edge-strong bg-surface-2 px-1 py-px font-mono text-2xs text-ink-dim;
+  }
+
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Recharts overrides so charts inherit the console aesthetic. */
+.recharts-cartesian-grid line {
+  stroke: #232936;
+}
+
+.recharts-text {
+  fill: #98a3b5;
+}
+
+.recharts-surface {
+  overflow: visible;
+}
