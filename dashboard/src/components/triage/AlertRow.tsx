@@ -42,15 +42,15 @@ function AlertRowInner({ alert, selected, isNew, verdict, onSelect }: AlertRowPr
       data-event-id={alert.event_id}
       aria-current={selected}
       className={clsx(
-        'group relative grid w-full items-center gap-2.5 border-b border-edge/60 border-l-[3px] py-[7px] pl-3 pr-2 text-left transition-colors',
-        'grid-cols-[1.75rem_4.5rem_4.25rem_minmax(0,1fr)_auto_2.5rem_0.85rem]',
+        'group relative grid w-full items-center gap-2.5 border-b border-edge/60 border-l-4 py-3 pl-3 pr-2 text-left transition-colors min-h-[48px]',
+        'grid-cols-[2rem_5rem_4.5rem_minmax(0,1fr)_auto_3rem_1rem]',
         selected ? 'bg-[#EE3124]/5 border-l-[#EE3124]' : RISK_LEFT_BORDER[band],
         !selected && 'hover:bg-surface-2/80',
         isNew && 'animate-slide-in',
         !alert.is_alert && 'opacity-50',
       )}
     >
-      <span className={clsx('tnum text-right font-mono text-base font-bold', RISK_TEXT_CLASS[band])}>
+      <span className={clsx('tnum text-right font-mono text-xl font-bold', RISK_TEXT_CLASS[band])}>
         {alert.risk_score.toFixed(0)}
       </span>
 
@@ -62,7 +62,7 @@ function AlertRowInner({ alert, selected, isNew, verdict, onSelect }: AlertRowPr
         <EntityIcon type={alert.entity_type} />
         <span
           className={clsx(
-            'truncate font-mono text-xs',
+            'truncate font-mono text-sm',
             alert.is_alert ? 'text-ink' : 'text-ink-dim',
           )}
         >
@@ -85,7 +85,7 @@ function AlertRowInner({ alert, selected, isNew, verdict, onSelect }: AlertRowPr
         )}
       </span>
 
-      <span className="tnum text-right font-mono text-2xs text-ink-faint">{relative(alert.timestamp)}</span>
+      <span className="tnum text-right font-mono text-xs text-ink-faint">{relative(alert.timestamp)}</span>
 
       <span className="flex justify-center">
         {MarkIcon ? (

@@ -231,13 +231,13 @@ function DetailBody({
   const [jsonOpen, setJsonOpen] = useState(false)
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-5 p-5 md:p-6">
       {/* Risk gauge + warnings row */}
-      <div className="flex flex-wrap items-start gap-4">
+      <div className="flex flex-col items-start gap-4 sm:flex-row sm:flex-wrap">
         <div className="flex flex-col items-center">
           <RiskGauge score={detail.risk_score} size={148} />
           <div className="mt-2 text-center">
-            <div className="text-2xs text-ink-faint">Confidence</div>
+            <div className="text-xs text-ink-faint">Confidence</div>
             <div className="tnum font-mono text-sm font-semibold text-ink">
               {(detail.attack_type_confidence * 100).toFixed(0)}%
             </div>
@@ -273,7 +273,7 @@ function DetailBody({
 
       {/* Narrative */}
       <Panel title="Analyst narrative">
-        <p className="text-sm leading-relaxed text-ink-dim">{detail.narrative}</p>
+        <p className="text-sm leading-7 text-ink-dim">{detail.narrative}</p>
       </Panel>
 
       {/* Counterfactuals */}
@@ -281,7 +281,7 @@ function DetailBody({
         <Panel title="Counterfactuals" subtitle="if these factors were normal…">
           <div className="space-y-2">
             {detail.counterfactuals.map((cf) => (
-              <div key={cf.feature} className="flex items-center justify-between gap-3 rounded bg-surface-2 px-3 py-2">
+              <div key={cf.feature} className="flex items-center justify-between gap-3 rounded bg-surface-2 px-4 py-3">
                 <div className="min-w-0">
                   <div className="text-xs font-medium text-ink">{cf.display_name}</div>
                 </div>
@@ -361,7 +361,7 @@ function EntitySummaryCard({
           View full profile →
         </button>
       </div>
-      <div className="grid grid-cols-3 gap-x-4 gap-y-1 text-2xs">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs sm:grid-cols-3">
         {[
           ['Events', summary.event_count.toLocaleString()],
           ['Alerts', String(summary.alert_count)],

@@ -35,7 +35,7 @@ export function OpsView({ budgetPct, onBudgetChange }: OpsViewProps) {
     <div className="h-full overflow-y-auto">
       <div className="flex flex-col gap-4 p-4">
         {/* Top KPI bar */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <StatTile
             label="PR-AUC"
             value={data ? data.pr_auc.toFixed(3) : '—'}
@@ -63,7 +63,7 @@ export function OpsView({ budgetPct, onBudgetChange }: OpsViewProps) {
         </div>
 
         {/* Latency KPIs */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {data
             ? (['p50', 'p95', 'p99', 'mean'] as const).map((k) => (
                 <StatTile
@@ -189,7 +189,7 @@ function BudgetCurve({
 }) {
   const ct = getChartTheme()
   return (
-    <ResponsiveContainer width="100%" height={220}>
+    <ResponsiveContainer width="100%" height={240}>
       <LineChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
         <CartesianGrid {...GRID} stroke={ct.grid} />
         <XAxis
@@ -228,7 +228,7 @@ function PrCurve({
   const ct = getChartTheme()
   return (
     <div>
-      <ResponsiveContainer width="100%" height={200}>
+      <ResponsiveContainer width="100%" height={240}>
         <LineChart data={points} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
           <CartesianGrid {...GRID} stroke={ct.grid} />
           <XAxis
@@ -275,7 +275,7 @@ function PerAttackRecallChart({
 
   return (
     <div>
-      <ResponsiveContainer width="100%" height={180}>
+      <ResponsiveContainer width="100%" height={240}>
         <BarChart
           data={sorted}
           layout="vertical"

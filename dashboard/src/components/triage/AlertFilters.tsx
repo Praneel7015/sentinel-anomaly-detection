@@ -42,12 +42,12 @@ export function AlertFilters({
 
   return (
     <div className="shrink-0 border-b border-edge bg-surface-1">
-      <div className="flex flex-wrap items-center gap-1.5 px-3 py-2">
+      <div className="flex flex-wrap items-center gap-2 px-4 py-3">
         <TextInput
           value={filters.search}
           onChange={(v) => set('search', v)}
           placeholder="Search entity, resource, IP, event id…"
-          icon={<Search size={12} />}
+          icon={<Search size={13} />}
           className="min-w-[150px] flex-1"
         />
         <Select
@@ -71,28 +71,28 @@ export function AlertFilters({
         <Select value={filters.sort} onChange={(v) => set('sort', v)} options={SORTS} />
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-edge/60 px-3 py-2">
+      <div className="flex flex-col gap-2 border-t border-edge/60 px-4 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2">
         <div className="flex min-w-[190px] flex-1 items-center gap-2">
-          <span className="shrink-0 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-ink-faint">
+          <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.18em] text-ink-faint">
             Min risk
           </span>
           <Slider value={filters.minRisk} min={0} max={95} step={1} onChange={(v) => set('minRisk', v)} className="flex-1" />
-          <span className="tnum w-6 shrink-0 text-right font-mono text-xs text-ink-dim">{filters.minRisk}</span>
+          <span className="tnum w-6 shrink-0 text-right font-mono text-sm text-ink-dim">{filters.minRisk}</span>
         </div>
 
         <div className="flex min-w-[260px] flex-[1.4] items-center gap-2">
-          <span className="flex shrink-0 items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[#EE3124]">
-            <Gauge size={11} />
+          <span className="flex shrink-0 items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-[#EE3124]">
+            <Gauge size={13} />
             Alert budget
           </span>
           <Slider value={budgetPct} min={0.1} max={5} step={0.05} onChange={onBudgetChange} className="flex-1" />
-          <span className="tnum w-11 shrink-0 text-right font-mono text-xs font-semibold text-[#EE3124]">
+          <span className="tnum w-11 shrink-0 text-right font-mono text-sm font-semibold text-[#EE3124]">
             {budgetPct.toFixed(2)}%
           </span>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2 text-2xs text-ink-faint">
-          <span className="inline-flex items-center gap-1 rounded bg-[#EE3124] px-2 py-0.5 text-[0.65rem] font-semibold text-white">
+        <div className="flex shrink-0 items-center gap-2 text-xs text-ink-faint">
+          <span className="inline-flex items-center gap-1 rounded bg-[#EE3124] px-3 py-1 text-sm font-bold text-white">
             <span className="tnum font-mono">{alertCount}</span> alerts · threshold <span className="tnum font-mono">{threshold.toFixed(1)}</span>
           </span>
           <span className="text-ink-faint/50">/</span>

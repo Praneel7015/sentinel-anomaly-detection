@@ -5,9 +5,9 @@ import { RISK_BAR_CLASS, RISK_TEXT_CLASS, bandForScore, riskColor } from '../../
 export function RiskBar({ score, className }: { score: number; className?: string }) {
   const band = bandForScore(score)
   return (
-    <div className={clsx('h-1.5 w-full overflow-hidden rounded-sm bg-surface-3', className)}>
+    <div className={clsx('h-2.5 w-full overflow-hidden rounded bg-surface-3', className)}>
       <div
-        className={clsx('h-full rounded-sm transition-[width] duration-500', RISK_BAR_CLASS[band])}
+        className={clsx('h-full rounded transition-[width] duration-500', RISK_BAR_CLASS[band])}
         style={{ width: `${Math.max(2, score)}%` }}
       />
     </div>
@@ -27,7 +27,7 @@ export function RiskScore({ score, className }: { score: number; className?: str
  * Semicircular gauge for the alert detail header. Drawn as an SVG arc so the
  * risk ramp reads at a glance without a chart library.
  */
-export function RiskGauge({ score, size = 168 }: { score: number; size?: number }) {
+export function RiskGauge({ score, size = 180 }: { score: number; size?: number }) {
   const band = bandForScore(score)
   const color = riskColor(score)
   const stroke = 12

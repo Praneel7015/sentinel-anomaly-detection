@@ -47,13 +47,13 @@ export function EntityView({ entityId, onSelectEntity, onOpenAlert }: EntityView
   if (!entityId) {
     return (
       <div className="flex h-full">
-        <div className="w-72 shrink-0 overflow-y-auto border-r border-edge">
-          <div className="sticky top-0 border-b border-edge bg-surface-1 p-2">
+        <div className="w-72 shrink-0 overflow-y-auto border-r border-edge md:w-80">
+          <div className="sticky top-0 border-b border-edge bg-surface-1 p-3">
             <input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search entity…"
-              className="h-7 w-full rounded border border-edge-strong bg-surface-2 px-2 text-xs text-ink placeholder:text-ink-faint focus:border-accent/60 focus:outline-none"
+              className="h-9 w-full rounded border border-edge-strong bg-surface-2 px-2 text-sm text-ink placeholder:text-ink-faint focus:border-accent/60 focus:outline-none"
             />
           </div>
           <div className="divide-y divide-edge/60">
@@ -66,7 +66,7 @@ export function EntityView({ entityId, onSelectEntity, onOpenAlert }: EntityView
                   key={id}
                   type="button"
                   onClick={() => onSelectEntity(id)}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-2xs transition hover:bg-surface-2"
+                  className="flex w-full min-h-[44px] items-center gap-2 px-3 py-2.5 text-left text-xs transition hover:bg-surface-2"
                 >
                   <EntityIcon type={entity?.entity_type ?? 'user'} size={12} />
                   <span className="min-w-0 flex-1 truncate font-mono text-ink-dim">{id}</span>
@@ -125,7 +125,7 @@ export function EntityView({ entityId, onSelectEntity, onOpenAlert }: EntityView
       {loading && !data ? (
         <EntitySkeleton />
       ) : data ? (
-        <div className="flex flex-col gap-4 p-4">
+        <div className="flex flex-col gap-4 p-4 md:p-6">
           {data.drift_state.drifting && (
             <DriftBanner
               detectedAt={data.drift_state.detected_at}
@@ -343,7 +343,7 @@ function RecentAlerts({
           key={a.event_id}
           type="button"
           onClick={() => onOpenAlert(a.event_id)}
-          className="flex w-full items-center gap-3 rounded px-2 py-1.5 text-left text-2xs transition hover:bg-surface-2"
+          className="flex w-full items-center gap-3 rounded px-2 py-2 text-left text-xs transition hover:bg-surface-2 min-h-[44px]"
         >
           <RiskScore score={a.risk_score} className="w-7 text-right" />
           <AttackChip type={a.predicted_attack_type} />

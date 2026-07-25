@@ -21,7 +21,8 @@ import type {
   StreamUnsubscribe,
 } from './types'
 
-const BASE = '/api'
+const _configuredBase = import.meta.env.VITE_API_BASE as string | undefined
+const BASE = _configuredBase ? `${_configuredBase}/api` : '/api'
 
 export class ApiError extends Error {
   status: number

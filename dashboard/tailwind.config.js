@@ -43,8 +43,18 @@ export default {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
+      screens: {
+        xs: '375px',
+        sm: '640px',
+        md: '768px',
+        lg: '1024px',
+        xl: '1280px',
+        '2xl': '1536px',
+      },
       fontSize: {
-        '2xs': ['0.6875rem', { lineHeight: '1rem' }],
+        '2xs': ['0.7rem', { lineHeight: '1.1rem' }],
+        xs: ['0.8rem', { lineHeight: '1.2rem' }],
+        sm: ['0.9rem', { lineHeight: '1.5rem' }],
       },
       keyframes: {
         'pulse-dot': {

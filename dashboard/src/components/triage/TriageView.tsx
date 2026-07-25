@@ -158,8 +158,8 @@ export function TriageView({
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="flex shrink-0 items-center justify-between gap-3 border-b border-edge bg-surface-1 px-3 py-1.5">
-        <span className="text-2xs text-ink-faint">
+      <div className="flex shrink-0 items-center justify-between gap-3 border-b border-edge bg-surface-1 px-4 py-2">
+        <span className="text-xs text-ink-faint">
           <kbd className="kbd">j</kbd>/<kbd className="kbd">k</kbd> navigate &nbsp;·&nbsp;
           <kbd className="kbd">1</kbd>–<kbd className="kbd">3</kbd> triage &nbsp;·&nbsp;
           <kbd className="kbd">Esc</kbd> close
@@ -183,11 +183,11 @@ export function TriageView({
         threshold={threshold}
       />
 
-      <div className="flex min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
         <div
           className={clsx(
-            'min-h-0 border-r border-edge transition-[width]',
-            hasDetail ? 'w-[42%] shrink-0' : 'flex-1',
+            'min-h-0 border-b border-edge lg:border-b-0 lg:border-r transition-[width]',
+            hasDetail ? 'w-full lg:w-[42%] lg:shrink-0' : 'flex-1',
           )}
         >
           <AlertQueue

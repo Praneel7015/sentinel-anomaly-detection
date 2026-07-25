@@ -11,7 +11,7 @@ export function Field({ label, children, className }: { label: string; children:
 }
 
 const inputBase =
-  'h-7 rounded border border-edge-strong bg-surface-2 px-2 text-xs text-ink placeholder:text-ink-faint transition focus:border-accent/60 focus:outline-none'
+  'h-9 rounded border border-edge-strong bg-surface-2 px-2 text-sm text-ink placeholder:text-ink-faint transition focus:border-accent/60 focus:outline-none'
 
 export function Select<T extends string>({
   value,
@@ -131,7 +131,7 @@ export function IconButton({
       aria-label={title}
       aria-pressed={active}
       className={clsx(
-        'inline-flex h-7 w-7 items-center justify-center rounded border transition',
+        'inline-flex h-9 w-9 items-center justify-center rounded border transition',
         active
           ? 'border-accent/50 bg-accent/10 text-accent'
           : 'border-edge-strong bg-surface-2 text-ink-dim hover:border-edge-strong hover:text-ink',

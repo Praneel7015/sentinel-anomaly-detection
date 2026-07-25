@@ -22,7 +22,7 @@ export function Panel({ title, subtitle, actions, children, className, bodyClass
           {actions && <div className="flex shrink-0 items-center gap-1.5">{actions}</div>}
         </header>
       )}
-      <div className={clsx('min-w-0 flex-1', bodyClassName ?? 'p-3')}>{children}</div>
+      <div className={clsx('min-w-0 flex-1', bodyClassName ?? 'p-4')}>{children}</div>
     </section>
   )
 }

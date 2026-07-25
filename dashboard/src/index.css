@@ -9,28 +9,28 @@
 
     /* Surfaces — warm white hierarchy */
     --surface-0: 255 255 255;
-    --surface-1: 250 250 250;
-    --surface-2: 244 244 244;
-    --surface-3: 232 232 232;
-    --surface-4: 214 215 214;
+    --surface-1: 249 249 249;
+    --surface-2: 242 242 242;
+    --surface-3: 228 228 228;
+    --surface-4: 210 210 210;
 
     /* Borders */
-    --edge: 224 224 224;
-    --edge-strong: 166 166 166;
+    --edge: 220 220 220;
+    --edge-strong: 160 160 160;
 
     /* Text — Total Black hierarchy */
     --ink: 28 28 28;
-    --ink-dim: 80 80 80;
-    --ink-faint: 128 128 128;
+    --ink-dim: 90 90 90;
+    --ink-faint: 140 140 140;
 
     /* Accent — Honeywell Red */
     --accent: 238 49 36;
     --accent-dim: 180 30 20;
-    --accent-glow: 248 120 110;
+    --accent-glow: 250 130 120;
 
     /* Recharts */
-    --chart-grid: 224 224 224;
-    --chart-text: 128 128 128;
+    --chart-grid: 220 220 220;
+    --chart-text: 140 140 140;
   }
 
   /* ── Dark theme — Honeywell Red accent persists ──────────────────────── */
@@ -68,6 +68,8 @@
   body {
     @apply bg-surface-0 text-ink font-sans antialiased;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'tnum';
+    font-size: 14px;
+    line-height: 1.6;
   }
 
   ::-webkit-scrollbar {
@@ -101,11 +103,11 @@
   }
 
   .panel-header {
-    @apply flex items-center justify-between gap-2 border-b border-edge bg-surface-2 px-3 py-2;
+    @apply flex items-center justify-between gap-2 border-b border-edge bg-surface-2 px-4 py-3;
   }
 
   .panel-title {
-    @apply text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-ink-faint;
+    @apply text-xs font-semibold uppercase tracking-widest text-ink-faint;
   }
 
   .chip {

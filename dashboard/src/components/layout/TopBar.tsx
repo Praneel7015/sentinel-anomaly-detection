@@ -12,8 +12,8 @@ function Counter({ icon, label, value, tone }: { icon: React.ReactNode; label: s
     <div className="flex items-center gap-2 border-l border-edge px-3 first:border-l-0">
       <span className="text-ink-faint">{icon}</span>
       <div className="leading-tight">
-        <div className={clsx('tnum font-mono text-sm font-semibold', tone ?? 'text-ink')}>{value}</div>
-        <div className="text-[0.625rem] uppercase tracking-[0.1em] text-ink-faint">{label}</div>
+        <div className={clsx('tnum font-mono text-base font-semibold', tone ?? 'text-ink')}>{value}</div>
+        <div className="text-xs uppercase tracking-[0.1em] text-ink-faint">{label}</div>
       </div>
     </div>
   )
@@ -33,15 +33,15 @@ export function TopBar({ view, onNavigate, theme, onToggleTheme }: TopBarProps) 
   const dotClass = healthy ? 'bg-risk-low' : connection === 'error' ? 'bg-risk-critical' : 'bg-risk-medium'
 
   return (
-    <header className="flex h-14 shrink-0 items-center gap-4 border-b border-edge bg-surface-1 pl-4 pr-3">
+    <header className="flex h-16 shrink-0 flex-wrap items-center gap-4 border-b border-edge bg-surface-1 pl-4 pr-3">
       {/* Logo */}
       <div className="flex items-center gap-2.5">
-        <div className="relative flex h-8 w-8 items-center justify-center rounded-sm bg-[#EE3124]">
-          <Radar size={17} className="text-white" />
+        <div className="relative flex h-10 w-10 items-center justify-center rounded-md bg-[#EE3124]">
+          <Radar size={19} className="text-white" />
         </div>
         <div className="leading-none">
-          <div className="text-[0.95rem] font-bold tracking-[0.18em] text-ink">SENTINEL</div>
-          <div className="mt-0.5 text-[0.6rem] uppercase tracking-widest text-ink-faint">
+          <div className="text-lg font-bold tracking-[0.2em] text-ink">SENTINEL</div>
+          <div className="mt-0.5 text-[0.7rem] uppercase tracking-widest text-ink-faint">
             Behavioural anomaly detection
           </div>
         </div>
@@ -55,14 +55,14 @@ export function TopBar({ view, onNavigate, theme, onToggleTheme }: TopBarProps) 
             type="button"
             onClick={() => onNavigate(v.id)}
             className={clsx(
-              'inline-flex items-center gap-1.5 rounded-sm px-2.5 py-1.5 text-xs font-medium transition',
+              'inline-flex items-center gap-1.5 rounded-sm px-4 h-9 text-sm font-medium transition',
               view === v.id
                 ? 'bg-[#EE3124] text-white shadow-sm'
                 : 'text-ink-dim hover:bg-surface-2 hover:text-ink',
             )}
           >
-            <v.icon size={13} />
-            {v.label}
+            <v.icon size={14} />
+            <span className="hidden sm:inline">{v.label}</span>
           </button>
         ))}
       </nav>
@@ -80,22 +80,24 @@ export function TopBar({ view, onNavigate, theme, onToggleTheme }: TopBarProps) 
           value={stats ? formatCompact(stats.alerts_raised) : '—'}
           tone="text-risk-high"
         />
-        <Counter
-          icon={<Zap size={14} />}
-          label="events/s"
-          value={stats ? stats.events_per_sec.toFixed(0) : '—'}
-          tone="text-accent"
-        />
-        <Counter
-          icon={<Cpu size={14} />}
-          label="uptime"
-          value={stats ? formatDuration(stats.uptime_s) : '—'}
-        />
+        <div className="hidden lg:flex">
+          <Counter
+            icon={<Zap size={14} />}
+            label="events/s"
+            value={stats ? stats.events_per_sec.toFixed(0) : '—'}
+            tone="text-accent"
+          />
+          <Counter
+            icon={<Cpu size={14} />}
+            label="uptime"
+            value={stats ? formatDuration(stats.uptime_s) : '—'}
+          />
+        </div>
       </div>
 
       {/* Status pill */}
       <div
-        className="flex items-center gap-2 rounded border border-edge bg-surface-0 px-2.5 py-1.5"
+        className="hidden sm:flex items-center gap-2 rounded border border-edge bg-surface-0 px-2.5 py-1.5"
         title={
           health
             ? `${health.status} · v${health.version} · model ${health.model_loaded ? 'loaded' : 'missing'} · torch ${health.torch_available ? 'available' : 'absent'}`
@@ -113,7 +115,7 @@ export function TopBar({ view, onNavigate, theme, onToggleTheme }: TopBarProps) 
       <button
         type="button"
         onClick={onToggleTheme}
-        className="flex h-8 w-8 items-center justify-center rounded border border-edge bg-surface-0 text-ink-faint transition hover:bg-surface-2 hover:text-ink"
+        className="flex h-9 w-9 items-center justify-center rounded border border-edge bg-surface-0 text-ink-faint transition hover:bg-surface-2 hover:text-ink"
         title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
         aria-label="Toggle theme"
       >
