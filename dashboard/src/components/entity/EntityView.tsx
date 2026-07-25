@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { SearchX } from 'lucide-react'
 import { useState } from 'react'
 import {
   Area,
@@ -90,7 +91,54 @@ export function EntityView({ entityId, onSelectEntity, onOpenAlert }: EntityView
     )
   }
 
-  if (error) return <ErrorState error={error} onRetry={reload} />
+  if (error) {
+    const is404 = (error as { status?: number }).status === 404
+    if (is404) {
+      return (
+        <div className="flex h-full">
+          <div className="w-72 shrink-0 overflow-y-auto border-r border-edge md:w-80">
+            <div className="sticky top-0 border-b border-edge bg-surface-1 p-3">
+              <input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search entity…"
+                className="h-9 w-full rounded border border-edge-strong bg-surface-2 px-2 text-sm text-ink placeholder:text-ink-faint focus:border-accent/60 focus:outline-none"
+              />
+            </div>
+            <div className="divide-y divide-edge/60">
+              {filtered.slice(0, 80).map((id) => {
+                const entity = MOCK_DATASET.entityById.get(id)
+                const events = MOCK_DATASET.byEntity.get(id) ?? []
+                const maxRisk = events.reduce((m, e) => Math.max(m, e.risk_score), 0)
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => onSelectEntity(id)}
+                    className="flex w-full items-center gap-2 px-3 py-2.5 text-left min-h-[44px] text-xs transition hover:bg-surface-2"
+                  >
+                    <EntityIcon type={entity?.entity_type ?? 'user'} size={13} />
+                    <span className="min-w-0 flex-1 truncate font-mono text-ink-dim">{id}</span>
+                    {maxRisk > 0 && (
+                      <RiskScore score={maxRisk} className="text-xs shrink-0" />
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+          <div className="flex flex-1 items-center justify-center">
+            <EmptyState
+              icon={<SearchX size={26} strokeWidth={1.4} />}
+              title="Entity not in live store yet"
+              hint="This entity will appear once events flow through the stream. Try selecting a mock entity from the list, or start the stream replay on the Triage tab."
+            />
+          </div>
+        </div>
+      )
+    }
+    return <ErrorState error={error} onRetry={reload} />
+  }
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-y-auto">
