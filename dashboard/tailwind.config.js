@@ -5,8 +5,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // All surfaces, edges, and ink tokens are CSS-variable-backed so
-        // swapping the `.dark` class on <html> switches the full palette.
+        // CSS-variable-backed surfaces — swapping `.dark` switches the full palette.
         surface: {
           0: 'rgb(var(--surface-0) / <alpha-value>)',
           1: 'rgb(var(--surface-1) / <alpha-value>)',
@@ -28,20 +27,17 @@ export default {
           dim: 'rgb(var(--accent-dim) / <alpha-value>)',
           glow: 'rgb(var(--accent-glow) / <alpha-value>)',
         },
-        amber: {
-          DEFAULT: '#f5a524',
-        },
-        // Risk ramp stays hardcoded — it's semantic and fixed across themes.
+        // Risk ramp — semantic, fixed across themes (Honeywell brand spec)
         risk: {
-          low: '#16a34a',
-          medium: '#b45309',
-          high: '#ea580c',
+          low:      '#2D7D46',
+          medium:   '#B87B0A',
+          high:     '#D4540A',
           critical: '#EE3124',
         },
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        mono: ['"JetBrains Mono"', '"IBM Plex Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       screens: {
         xs: '375px',
@@ -53,8 +49,8 @@ export default {
       },
       fontSize: {
         '2xs': ['0.7rem', { lineHeight: '1.1rem' }],
-        xs: ['0.8rem', { lineHeight: '1.2rem' }],
-        sm: ['0.9rem', { lineHeight: '1.5rem' }],
+        xs:    ['0.75rem', { lineHeight: '1.15rem' }],
+        sm:    ['0.875rem', { lineHeight: '1.5rem' }],
       },
       keyframes: {
         'pulse-dot': {
@@ -62,17 +58,25 @@ export default {
           '50%': { opacity: '0.3' },
         },
         'slide-in': {
-          from: { opacity: '0', transform: 'translateY(-6px)' },
-          to: { opacity: '1', transform: 'translateY(0)' },
+          from: { opacity: '0', transform: 'translateY(-4px)' },
+          to:   { opacity: '1', transform: 'translateY(0)' },
         },
         shimmer: {
           '100%': { transform: 'translateX(100%)' },
         },
+        'fade-in': {
+          from: { opacity: '0' },
+          to:   { opacity: '1' },
+        },
       },
       animation: {
         'pulse-dot': 'pulse-dot 2s ease-in-out infinite',
-        'slide-in': 'slide-in 220ms ease-out',
-        shimmer: 'shimmer 1.6s infinite',
+        'slide-in':  'slide-in 180ms ease-out',
+        shimmer:     'shimmer 1.6s infinite',
+        'fade-in':   'fade-in 200ms ease-out',
+      },
+      borderWidth: {
+        '3': '3px',
       },
     },
   },

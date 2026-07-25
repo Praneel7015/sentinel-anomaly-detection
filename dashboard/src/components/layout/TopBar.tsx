@@ -7,13 +7,20 @@ import type { Theme } from '../../App'
 import type { ViewId } from '../../views'
 import { VIEWS } from '../../views'
 
-function Counter({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: string; tone?: string }) {
+interface StatCounterProps {
+  icon: React.ReactNode
+  label: string
+  value: string
+  tone?: string
+}
+
+function StatCounter({ icon, label, value, tone }: StatCounterProps) {
   return (
     <div className="flex items-center gap-2 border-l border-edge px-3 first:border-l-0">
       <span className="text-ink-faint">{icon}</span>
       <div className="leading-tight">
-        <div className={clsx('tnum font-mono text-base font-semibold', tone ?? 'text-ink')}>{value}</div>
-        <div className="text-xs uppercase tracking-[0.1em] text-ink-faint">{label}</div>
+        <div className={clsx('tnum font-mono text-[15px] font-bold', tone ?? 'text-ink')}>{value}</div>
+        <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-ink-faint">{label}</div>
       </div>
     </div>
   )
@@ -30,96 +37,114 @@ export function TopBar({ view, onNavigate, theme, onToggleTheme }: TopBarProps) 
   const { health, stats, connection } = useStream()
 
   const healthy = health?.status === 'ok'
-  const dotClass = healthy ? 'bg-risk-low' : connection === 'error' ? 'bg-risk-critical' : 'bg-risk-medium'
+  const connectionColor = healthy
+    ? 'bg-risk-low'
+    : connection === 'error'
+      ? 'bg-risk-critical'
+      : 'bg-risk-medium'
 
   return (
-    <header className="flex h-16 shrink-0 flex-wrap items-center gap-4 border-b border-edge bg-surface-1 pl-4 pr-3">
-      {/* Logo */}
-      <div className="flex items-center gap-2.5">
-        <div className="relative flex h-10 w-10 items-center justify-center rounded-md bg-[#EE3124]">
-          <Radar size={19} className="text-white" />
+    <header className="flex h-14 shrink-0 items-center border-b border-edge bg-surface-1 pl-5 pr-3">
+      {/* ── Logo ────────────────────────────────────────────────── */}
+      <div className="flex shrink-0 items-center gap-3 pr-6">
+        <div className="flex h-8 w-8 items-center justify-center bg-[#EE3124]">
+          <Radar size={16} className="text-white" strokeWidth={2.5} />
         </div>
         <div className="leading-none">
-          <div className="text-lg font-bold tracking-[0.2em] text-ink">SENTINEL</div>
-          <div className="mt-0.5 text-[0.7rem] uppercase tracking-widest text-ink-faint">
-            Behavioural anomaly detection
+          <div className="text-[15px] font-bold tracking-[0.22em] text-ink">SENTINEL</div>
+          <div className="mt-0.5 text-[9px] font-medium uppercase tracking-[0.18em] text-ink-faint">
+            Behavioural Anomaly Detection
           </div>
         </div>
       </div>
 
-      {/* Nav */}
-      <nav className="ml-2 flex items-center gap-0.5 rounded border border-edge bg-surface-0 p-0.5">
-        {VIEWS.map((v) => (
-          <button
-            key={v.id}
-            type="button"
-            onClick={() => onNavigate(v.id)}
-            className={clsx(
-              'inline-flex items-center gap-1.5 rounded-sm px-4 h-9 text-sm font-medium transition',
-              view === v.id
-                ? 'bg-[#EE3124] text-white shadow-sm'
-                : 'text-ink-dim hover:bg-surface-2 hover:text-ink',
-            )}
-          >
-            <v.icon size={14} />
-            <span className="hidden sm:inline">{v.label}</span>
-          </button>
-        ))}
+      {/* ── Divider ─────────────────────────────────────────────── */}
+      <div className="mr-1 h-6 w-px bg-edge-strong/60" />
+
+      {/* ── Navigation — bottom-border indicator style ───────────── */}
+      <nav className="flex h-14 items-stretch">
+        {VIEWS.map((v) => {
+          const active = view === v.id
+          return (
+            <button
+              key={v.id}
+              type="button"
+              onClick={() => onNavigate(v.id)}
+              className={clsx(
+                'nav-tab',
+                active ? 'nav-tab--active' : 'nav-tab--inactive',
+              )}
+            >
+              <v.icon size={13} strokeWidth={active ? 2.5 : 2} />
+              <span className="hidden text-sm sm:inline">{v.label}</span>
+            </button>
+          )
+        })}
       </nav>
 
-      {/* Stats */}
+      {/* ── Stats ───────────────────────────────────────────────── */}
       <div className="ml-auto flex items-center">
-        <Counter
-          icon={<Activity size={14} />}
+        <StatCounter
+          icon={<Activity size={13} />}
           label="events"
           value={stats ? formatCompact(stats.events_processed) : '—'}
         />
-        <Counter
-          icon={<ShieldAlert size={14} />}
+        <StatCounter
+          icon={<ShieldAlert size={13} />}
           label="alerts"
           value={stats ? formatCompact(stats.alerts_raised) : '—'}
           tone="text-risk-high"
         />
         <div className="hidden lg:flex">
-          <Counter
-            icon={<Zap size={14} />}
+          <StatCounter
+            icon={<Zap size={13} />}
             label="events/s"
             value={stats ? stats.events_per_sec.toFixed(0) : '—'}
             tone="text-accent"
           />
-          <Counter
-            icon={<Cpu size={14} />}
+          <StatCounter
+            icon={<Cpu size={13} />}
             label="uptime"
             value={stats ? formatDuration(stats.uptime_s) : '—'}
           />
         </div>
       </div>
 
-      {/* Status pill */}
+      {/* ── Connection status ────────────────────────────────────── */}
       <div
-        className="hidden sm:flex items-center gap-2 rounded border border-edge bg-surface-0 px-2.5 py-1.5"
+        className="ml-3 hidden sm:flex items-center gap-2 border border-edge bg-surface-0 px-2.5 py-1.5"
         title={
           health
-            ? `${health.status} · v${health.version} · model ${health.model_loaded ? 'loaded' : 'missing'} · torch ${health.torch_available ? 'available' : 'absent'}`
+            ? `${health.status} · v${health.version} · model ${health.model_loaded ? 'loaded' : 'missing'}`
             : 'Backend unreachable'
         }
       >
-        <span className={clsx('h-2 w-2 rounded-full', dotClass, healthy && 'animate-pulse-dot')} />
+        <span
+          className={clsx(
+            'h-[7px] w-[7px] rounded-full',
+            connectionColor,
+            healthy && 'animate-pulse-dot',
+          )}
+        />
         <div className="leading-tight">
-          <div className="text-2xs font-semibold tracking-wide text-ink">{USE_MOCK ? 'MOCK' : 'LIVE'}</div>
-          <div className="text-[0.625rem] text-ink-faint">{health ? `v${health.version}` : 'offline'}</div>
+          <div className="text-[11px] font-semibold tracking-wide text-ink">
+            {USE_MOCK ? 'MOCK' : 'LIVE'}
+          </div>
+          <div className="text-[9px] text-ink-faint">
+            {health ? `v${health.version}` : 'offline'}
+          </div>
         </div>
       </div>
 
-      {/* Theme toggle */}
+      {/* ── Theme toggle ─────────────────────────────────────────── */}
       <button
         type="button"
         onClick={onToggleTheme}
-        className="flex h-9 w-9 items-center justify-center rounded border border-edge bg-surface-0 text-ink-faint transition hover:bg-surface-2 hover:text-ink"
+        className="ml-2 flex h-8 w-8 items-center justify-center border border-edge bg-surface-0 text-ink-faint transition-colors hover:bg-surface-2 hover:text-ink"
         title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
         aria-label="Toggle theme"
       >
-        {theme === 'light' ? <Moon size={15} /> : <Sun size={15} />}
+        {theme === 'light' ? <Moon size={14} /> : <Sun size={14} />}
       </button>
     </header>
   )

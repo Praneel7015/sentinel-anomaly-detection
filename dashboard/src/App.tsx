@@ -46,7 +46,7 @@ export default function App() {
 
   return (
     <StreamProvider>
-      <div className="flex h-full min-h-0 flex-col bg-surface-0">
+      <div className="flex h-full min-h-0 flex-col bg-surface-0 text-ink">
         <TopBar view={view} onNavigate={setView} theme={theme} onToggleTheme={toggleTheme} />
         <main className="min-h-0 flex-1 overflow-hidden">
           {view === 'triage' && (

@@ -13,9 +13,9 @@ export interface TriageFilters {
 
 const SORTS: { value: AlertSort; label: string }[] = [
   { value: 'risk_desc', label: 'Risk ↓' },
-  { value: 'risk_asc', label: 'Risk ↑' },
+  { value: 'risk_asc',  label: 'Risk ↑' },
   { value: 'time_desc', label: 'Newest' },
-  { value: 'time_asc', label: 'Oldest' },
+  { value: 'time_asc',  label: 'Oldest' },
 ]
 
 interface AlertFiltersProps {
@@ -41,21 +41,22 @@ export function AlertFilters({
     onChange({ ...filters, [key]: value })
 
   return (
-    <div className="shrink-0 border-b border-edge bg-surface-1">
-      <div className="flex flex-wrap items-center gap-2 px-4 py-3">
+    <div className="shrink-0 border-b border-edge bg-surface-0">
+      {/* ── Row 1: search + dropdowns ──────────────────────────── */}
+      <div className="flex flex-wrap items-center gap-2 px-4 py-2.5">
         <TextInput
           value={filters.search}
           onChange={(v) => set('search', v)}
           placeholder="Search entity, resource, IP, event id…"
-          icon={<Search size={13} />}
-          className="min-w-[150px] flex-1"
+          icon={<Search size={12} />}
+          className="min-w-[160px] flex-1"
         />
         <Select
           value={filters.attackType}
           onChange={(v) => set('attackType', v)}
           options={[
-            { value: 'all', label: 'All types' },
-            { value: 'normal', label: 'Normal' },
+            { value: 'all',           label: 'All types' },
+            { value: 'normal',        label: 'Normal' },
             { value: 'unknown_novel', label: 'Unknown / novel' },
             ...ATTACK_TYPES.map((t) => ({ value: t as string, label: attackMeta(t).label })),
           ]}
@@ -68,36 +69,62 @@ export function AlertFilters({
             ...ENTITY_TYPES.map((t) => ({ value: t as string, label: ENTITY_TYPE_LABEL[t] })),
           ]}
         />
-        <Select value={filters.sort} onChange={(v) => set('sort', v)} options={SORTS} />
+        <Select
+          value={filters.sort}
+          onChange={(v) => set('sort', v)}
+          options={SORTS}
+        />
       </div>
 
-      <div className="flex flex-col gap-2 border-t border-edge/60 px-4 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2">
-        <div className="flex min-w-[190px] flex-1 items-center gap-2">
-          <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.18em] text-ink-faint">
+      {/* ── Row 2: sliders + counter ────────────────────────────── */}
+      <div className="flex flex-col gap-2 border-t border-edge/60 px-4 py-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-1.5">
+        {/* Min risk slider */}
+        <div className="flex min-w-[180px] flex-1 items-center gap-2.5">
+          <span className="shrink-0 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint">
             Min risk
           </span>
-          <Slider value={filters.minRisk} min={0} max={95} step={1} onChange={(v) => set('minRisk', v)} className="flex-1" />
-          <span className="tnum w-6 shrink-0 text-right font-mono text-sm text-ink-dim">{filters.minRisk}</span>
+          <Slider
+            value={filters.minRisk}
+            min={0}
+            max={95}
+            step={1}
+            onChange={(v) => set('minRisk', v)}
+            className="flex-1"
+          />
+          <span className="tnum w-6 shrink-0 text-right font-mono text-[12px] font-semibold text-ink-dim">
+            {filters.minRisk}
+          </span>
         </div>
 
-        <div className="flex min-w-[260px] flex-[1.4] items-center gap-2">
-          <span className="flex shrink-0 items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-[#EE3124]">
-            <Gauge size={13} />
-            Alert budget
+        {/* Alert budget slider */}
+        <div className="flex min-w-[240px] flex-[1.4] items-center gap-2.5">
+          <span className="flex shrink-0 items-center gap-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-[#EE3124]">
+            <Gauge size={12} />
+            Budget
           </span>
-          <Slider value={budgetPct} min={0.1} max={5} step={0.05} onChange={onBudgetChange} className="flex-1" />
-          <span className="tnum w-11 shrink-0 text-right font-mono text-sm font-semibold text-[#EE3124]">
+          <Slider
+            value={budgetPct}
+            min={0.1}
+            max={5}
+            step={0.05}
+            onChange={onBudgetChange}
+            className="flex-1"
+          />
+          <span className="tnum w-12 shrink-0 text-right font-mono text-[12px] font-bold text-[#EE3124]">
             {budgetPct.toFixed(2)}%
           </span>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2 text-xs text-ink-faint">
-          <span className="inline-flex items-center gap-1 rounded bg-[#EE3124] px-3 py-1 text-sm font-bold text-white">
-            <span className="tnum font-mono">{alertCount}</span> alerts · threshold <span className="tnum font-mono">{threshold.toFixed(1)}</span>
-          </span>
-          <span className="text-ink-faint/50">/</span>
-          <span>
-            <span className="tnum font-mono text-ink-dim">{totalCount}</span> ranked
+        {/* Alert count badge */}
+        <div className="flex shrink-0 items-center gap-2">
+          <div className="flex items-center gap-1.5 border border-[#EE3124]/30 bg-[#EE3124]/[0.06] px-2.5 py-1">
+            <span className="tnum font-mono text-[13px] font-bold text-[#EE3124]">{alertCount}</span>
+            <span className="font-mono text-[10px] text-[#EE3124]/70">
+              alerts · ≥{threshold.toFixed(1)}
+            </span>
+          </div>
+          <span className="font-mono text-[10px] text-ink-faint">
+            <span className="tnum text-ink-dim">{totalCount}</span> ranked
           </span>
         </div>
       </div>
