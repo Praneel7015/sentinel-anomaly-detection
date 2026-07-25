@@ -63,3 +63,10 @@ dist-ssr/
 .idea/
 .DS_Store
 Thumbs.db
+
+# --- Logs ---
+logs/
+*.log
+
+# --- Hosting configs are committed ---
+# render.yaml, vercel.json, Procfile are intentionally tracked
