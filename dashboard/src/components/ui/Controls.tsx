@@ -100,12 +100,12 @@ export function Slider({
         'h-1.5 cursor-pointer appearance-none rounded-full bg-surface-3 outline-none',
         '[&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:appearance-none',
         '[&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-surface-0',
-        '[&::-webkit-slider-thumb]:bg-accent [&::-webkit-slider-thumb]:shadow-[0_0_0_3px_rgba(34,211,238,0.18)]',
+        '[&::-webkit-slider-thumb]:bg-accent [&::-webkit-slider-thumb]:shadow-[0_0_0_3px_rgba(238,49,36,0.18)]',
         '[&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:rounded-full',
         '[&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-accent',
         className,
       )}
-      style={{ background: `linear-gradient(to right, #22d3ee 0%, #22d3ee ${pct}%, #232936 ${pct}%, #232936 100%)` }}
+      style={{ background: `linear-gradient(to right, rgb(var(--accent)) 0%, rgb(var(--accent)) ${pct}%, rgb(var(--surface-3)) ${pct}%, rgb(var(--surface-3)) 100%)` }}
     />
   )
 }
@@ -162,9 +162,9 @@ export function Button({
 }) {
   const variants: Record<string, string> = {
     default: 'border-edge-strong bg-surface-2 text-ink-dim hover:text-ink hover:border-ink-faint',
-    accent: 'border-accent/50 bg-accent/10 text-accent hover:bg-accent/20',
+    accent: 'border-[#2E6099]/50 bg-[#2E6099]/10 text-[#2E6099] hover:bg-[#2E6099]/20 dark:border-[#3B87DE]/50 dark:bg-[#3B87DE]/10 dark:text-[#3B87DE] dark:hover:bg-[#3B87DE]/20',
     success: 'border-risk-low/50 bg-risk-low/10 text-risk-low hover:bg-risk-low/20',
-    danger: 'border-risk-critical/50 bg-risk-critical/10 text-risk-critical hover:bg-risk-critical/20',
+    danger: 'border-[#EE3124] bg-[#EE3124] text-white hover:bg-[#c0281e] hover:border-[#c0281e]',
     warn: 'border-risk-high/50 bg-risk-high/10 text-risk-high hover:bg-risk-high/20',
     ghost: 'border-transparent bg-transparent text-ink-faint hover:text-ink',
   }

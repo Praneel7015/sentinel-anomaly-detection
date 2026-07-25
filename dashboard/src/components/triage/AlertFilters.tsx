@@ -73,7 +73,7 @@ export function AlertFilters({
 
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-edge/60 px-3 py-2">
         <div className="flex min-w-[190px] flex-1 items-center gap-2">
-          <span className="shrink-0 text-2xs font-semibold uppercase tracking-[0.12em] text-ink-faint">
+          <span className="shrink-0 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-ink-faint">
             Min risk
           </span>
           <Slider value={filters.minRisk} min={0} max={95} step={1} onChange={(v) => set('minRisk', v)} className="flex-1" />
@@ -81,27 +81,23 @@ export function AlertFilters({
         </div>
 
         <div className="flex min-w-[260px] flex-[1.4] items-center gap-2">
-          <span className="flex shrink-0 items-center gap-1 text-2xs font-semibold uppercase tracking-[0.12em] text-accent">
+          <span className="flex shrink-0 items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[#EE3124]">
             <Gauge size={11} />
             Alert budget
           </span>
           <Slider value={budgetPct} min={0.1} max={5} step={0.05} onChange={onBudgetChange} className="flex-1" />
-          <span className="tnum w-11 shrink-0 text-right font-mono text-xs font-semibold text-accent">
+          <span className="tnum w-11 shrink-0 text-right font-mono text-xs font-semibold text-[#EE3124]">
             {budgetPct.toFixed(2)}%
           </span>
         </div>
 
-        <div className="flex shrink-0 items-center gap-3 text-2xs text-ink-faint">
-          <span>
-            <span className="tnum font-mono font-semibold text-ink">{alertCount}</span> alerts
+        <div className="flex shrink-0 items-center gap-2 text-2xs text-ink-faint">
+          <span className="inline-flex items-center gap-1 rounded bg-[#EE3124] px-2 py-0.5 text-[0.65rem] font-semibold text-white">
+            <span className="tnum font-mono">{alertCount}</span> alerts · threshold <span className="tnum font-mono">{threshold.toFixed(1)}</span>
           </span>
           <span className="text-ink-faint/50">/</span>
           <span>
             <span className="tnum font-mono text-ink-dim">{totalCount}</span> ranked
-          </span>
-          <span className="text-ink-faint/50">·</span>
-          <span>
-            threshold <span className="tnum font-mono text-ink-dim">{threshold.toFixed(1)}</span>
           </span>
         </div>
       </div>

@@ -42,7 +42,7 @@ export function RiskGauge({ score, size = 168 }: { score: number; size?: number 
   return (
     <div className="relative flex flex-col items-center" style={{ width: size, height: size / 2 + 26 }}>
       <svg width={size} height={size / 2 + 6} viewBox={`0 0 ${size} ${size / 2 + 6}`} role="img" aria-label={`Risk score ${score}`}>
-        <path d={arc} fill="none" stroke="#1a1f29" strokeWidth={stroke} strokeLinecap="round" />
+        <path d={arc} fill="none" stroke="rgb(var(--surface-3))" strokeWidth={stroke} strokeLinecap="round" />
         <path
           d={arc}
           fill="none"
@@ -63,7 +63,7 @@ export function RiskGauge({ score, size = 168 }: { score: number; size?: number 
               y1={cy - Math.sin(angle) * inner}
               x2={cx + Math.cos(angle) * outer}
               y2={cy - Math.sin(angle) * outer}
-              stroke="#0a0c10"
+              stroke="rgb(var(--surface-0))"
               strokeWidth={2}
             />
           )

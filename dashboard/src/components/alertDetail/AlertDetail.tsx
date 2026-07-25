@@ -267,13 +267,13 @@ function DetailBody({
       </Panel>
 
       {/* Contribution waterfall */}
-      <Panel title="Risk contributions" subtitle="what drove this score">
+      <Panel title="Risk contributions" subtitle="what drove this score" className="border-t-2 border-t-[#EE3124]">
         <ContributionWaterfall contributions={detail.contributions} totalRisk={detail.risk_score} />
       </Panel>
 
       {/* Narrative */}
       <Panel title="Analyst narrative">
-        <p className="text-xs leading-relaxed text-ink-dim">{detail.narrative}</p>
+        <p className="text-sm leading-relaxed text-ink-dim">{detail.narrative}</p>
       </Panel>
 
       {/* Counterfactuals */}

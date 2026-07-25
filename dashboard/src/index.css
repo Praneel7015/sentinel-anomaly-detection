@@ -3,59 +3,60 @@
 @tailwind utilities;
 
 @layer base {
-  /* ── Light theme (default) ───────────────────────────────────────────── */
+  /* ── Light theme (default) — Honeywell Industrial Precision ─────────── */
   :root {
     color-scheme: light;
 
-    /* Surfaces: white → warm-gray hierarchy */
+    /* Surfaces — warm white hierarchy */
     --surface-0: 255 255 255;
-    --surface-1: 248 250 252;
-    --surface-2: 241 245 249;
-    --surface-3: 226 232 240;
-    --surface-4: 203 213 225;
+    --surface-1: 250 250 250;
+    --surface-2: 244 244 244;
+    --surface-3: 232 232 232;
+    --surface-4: 214 215 214;
 
     /* Borders */
-    --edge: 226 232 240;
-    --edge-strong: 148 163 184;
+    --edge: 224 224 224;
+    --edge-strong: 166 166 166;
 
-    /* Text */
-    --ink: 15 23 42;
-    --ink-dim: 51 65 85;
-    --ink-faint: 100 116 139;
+    /* Text — Total Black hierarchy */
+    --ink: 28 28 28;
+    --ink-dim: 80 80 80;
+    --ink-faint: 128 128 128;
 
-    /* Accent: sky-600 — readable on white, professional */
-    --accent: 2 132 199;
-    --accent-dim: 3 105 161;
-    --accent-glow: 56 189 248;
+    /* Accent — Honeywell Red */
+    --accent: 238 49 36;
+    --accent-dim: 180 30 20;
+    --accent-glow: 248 120 110;
 
     /* Recharts */
-    --chart-grid: 226 232 240;
-    --chart-text: 100 116 139;
+    --chart-grid: 224 224 224;
+    --chart-text: 128 128 128;
   }
 
-  /* ── Dark theme ──────────────────────────────────────────────────────── */
+  /* ── Dark theme — Honeywell Red accent persists ──────────────────────── */
   .dark {
     color-scheme: dark;
 
-    --surface-0: 10 12 16;
-    --surface-1: 18 21 28;
-    --surface-2: 26 31 41;
-    --surface-3: 35 41 54;
-    --surface-4: 45 52 66;
+    --surface-0: 16 16 14;
+    --surface-1: 24 24 22;
+    --surface-2: 34 34 32;
+    --surface-3: 46 46 44;
+    --surface-4: 60 60 58;
 
-    --edge: 35 41 54;
-    --edge-strong: 51 60 77;
+    --edge: 46 46 44;
+    --edge-strong: 72 72 68;
 
-    --ink: 230 235 242;
-    --ink-dim: 152 163 181;
-    --ink-faint: 93 104 121;
+    --ink: 240 240 238;
+    --ink-dim: 170 170 166;
+    --ink-faint: 110 110 108;
 
-    --accent: 34 211 238;
-    --accent-dim: 14 116 144;
-    --accent-glow: 103 232 249;
+    /* Accent stays Honeywell Red even in dark mode */
+    --accent: 238 49 36;
+    --accent-dim: 180 30 20;
+    --accent-glow: 248 120 110;
 
-    --chart-grid: 35 41 54;
-    --chart-text: 152 163 181;
+    --chart-grid: 46 46 44;
+    --chart-text: 110 110 108;
   }
 
   html,
@@ -96,15 +97,15 @@
 
 @layer components {
   .panel {
-    @apply rounded-md border border-edge bg-surface-1;
+    @apply rounded border border-edge bg-surface-1;
   }
 
   .panel-header {
-    @apply flex items-center justify-between gap-2 border-b border-edge px-3 py-2;
+    @apply flex items-center justify-between gap-2 border-b border-edge bg-surface-2 px-3 py-2;
   }
 
   .panel-title {
-    @apply text-2xs font-semibold uppercase tracking-[0.14em] text-ink-dim;
+    @apply text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-ink-faint;
   }
 
   .chip {

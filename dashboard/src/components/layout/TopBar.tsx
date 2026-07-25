@@ -36,12 +36,12 @@ export function TopBar({ view, onNavigate, theme, onToggleTheme }: TopBarProps) 
     <header className="flex h-14 shrink-0 items-center gap-4 border-b border-edge bg-surface-1 pl-4 pr-3">
       {/* Logo */}
       <div className="flex items-center gap-2.5">
-        <div className="relative flex h-8 w-8 items-center justify-center rounded bg-accent/10 ring-1 ring-inset ring-accent/30">
-          <Radar size={17} className="text-accent" />
+        <div className="relative flex h-8 w-8 items-center justify-center rounded-sm bg-[#EE3124]">
+          <Radar size={17} className="text-white" />
         </div>
         <div className="leading-none">
-          <div className="text-[0.95rem] font-bold tracking-[0.22em] text-ink">SENTINEL</div>
-          <div className="mt-0.5 text-[0.625rem] uppercase tracking-[0.14em] text-ink-faint">
+          <div className="text-[0.95rem] font-bold tracking-[0.18em] text-ink">SENTINEL</div>
+          <div className="mt-0.5 text-[0.6rem] uppercase tracking-widest text-ink-faint">
             Behavioural anomaly detection
           </div>
         </div>
@@ -55,9 +55,9 @@ export function TopBar({ view, onNavigate, theme, onToggleTheme }: TopBarProps) 
             type="button"
             onClick={() => onNavigate(v.id)}
             className={clsx(
-              'inline-flex items-center gap-1.5 rounded px-2.5 py-1.5 text-xs font-medium transition',
+              'inline-flex items-center gap-1.5 rounded-sm px-2.5 py-1.5 text-xs font-medium transition',
               view === v.id
-                ? 'bg-accent text-white shadow-sm'
+                ? 'bg-[#EE3124] text-white shadow-sm'
                 : 'text-ink-dim hover:bg-surface-2 hover:text-ink',
             )}
           >

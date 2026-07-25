@@ -12,7 +12,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "https://sentinel-api.onrender.com/api/$1"
+      "dest": "https://sentinel-anomaly-detection.onrender.com/api/$1"
     },
     {
       "src": "/(.*)",

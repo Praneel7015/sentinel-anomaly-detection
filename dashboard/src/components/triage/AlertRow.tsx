@@ -22,6 +22,14 @@ interface AlertRowProps {
   onSelect: (eventId: string) => void
 }
 
+const RISK_LEFT_BORDER: Record<string, string> = {
+  critical: 'border-l-[#EE3124]',
+  high: 'border-l-[#ea580c]',
+  medium: 'border-l-[#b45309]',
+  low: 'border-l-[#16a34a]',
+  normal: 'border-l-transparent',
+}
+
 function AlertRowInner({ alert, selected, isNew, verdict, onSelect }: AlertRowProps) {
   const band = bandForScore(alert.risk_score)
   const mark = verdict ? VERDICT_MARK[verdict] : null
@@ -34,20 +42,15 @@ function AlertRowInner({ alert, selected, isNew, verdict, onSelect }: AlertRowPr
       data-event-id={alert.event_id}
       aria-current={selected}
       className={clsx(
-        'group relative grid w-full items-center gap-2.5 border-b border-edge/60 py-[7px] pl-3 pr-2 text-left transition-colors',
+        'group relative grid w-full items-center gap-2.5 border-b border-edge/60 border-l-[3px] py-[7px] pl-3 pr-2 text-left transition-colors',
         'grid-cols-[1.75rem_4.5rem_4.25rem_minmax(0,1fr)_auto_2.5rem_0.85rem]',
-        selected ? 'bg-accent/[0.07]' : 'hover:bg-surface-2/60',
+        selected ? 'bg-[#EE3124]/5 border-l-[#EE3124]' : RISK_LEFT_BORDER[band],
+        !selected && 'hover:bg-surface-2/80',
         isNew && 'animate-slide-in',
+        !alert.is_alert && 'opacity-50',
       )}
     >
-      <span
-        className={clsx(
-          'absolute inset-y-0 left-0 w-[2px] transition-opacity',
-          selected ? 'bg-accent opacity-100' : isNew ? 'bg-accent/70 opacity-100' : 'opacity-0',
-        )}
-      />
-
-      <span className={clsx('tnum text-right font-mono text-[0.8rem] font-semibold', RISK_TEXT_CLASS[band])}>
+      <span className={clsx('tnum text-right font-mono text-base font-bold', RISK_TEXT_CLASS[band])}>
         {alert.risk_score.toFixed(0)}
       </span>
 

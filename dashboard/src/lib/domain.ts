@@ -39,7 +39,7 @@ const UNKNOWN_META: AttackMeta = {
   label: 'Unknown / novel',
   short: 'NOVEL',
   color: '#c084fc',
-  chip: 'text-purple-300 border-purple-400/40 bg-purple-400/10',
+  chip: 'text-purple-700 border-purple-400/50 bg-purple-50 dark:text-purple-300 dark:border-purple-400/40 dark:bg-purple-400/10',
   description: 'Detectors and signature matcher disagree — pattern not in the known taxonomy.',
 }
 
@@ -48,56 +48,56 @@ export const ATTACK_META: Record<string, AttackMeta> = {
     label: 'Brute force',
     short: 'BRUTE',
     color: '#ef4444',
-    chip: 'text-red-300 border-red-400/40 bg-red-400/10',
+    chip: 'text-red-700 border-red-400/50 bg-red-50 dark:text-red-300 dark:border-red-400/40 dark:bg-red-400/10',
     description: 'High-rate authentication failures against a single account.',
   },
   impossible_travel: {
     label: 'Impossible travel',
     short: 'TRAVEL',
     color: '#f97316',
-    chip: 'text-orange-300 border-orange-400/40 bg-orange-400/10',
+    chip: 'text-orange-700 border-orange-400/50 bg-orange-50 dark:text-orange-300 dark:border-orange-400/40 dark:bg-orange-400/10',
     description: 'Geographically implausible session velocity between consecutive logins.',
   },
   credential_stuffing: {
     label: 'Credential stuffing',
     short: 'STUFF',
     color: '#eab308',
-    chip: 'text-yellow-300 border-yellow-400/40 bg-yellow-400/10',
+    chip: 'text-yellow-700 border-yellow-400/50 bg-yellow-50 dark:text-yellow-300 dark:border-yellow-400/40 dark:bg-yellow-400/10',
     description: 'Replayed credential pairs sprayed across many accounts from shared infrastructure.',
   },
   lateral_movement: {
     label: 'Lateral movement',
     short: 'LATERAL',
     color: '#22d3ee',
-    chip: 'text-cyan-300 border-cyan-400/40 bg-cyan-400/10',
+    chip: 'text-cyan-700 border-cyan-400/50 bg-cyan-50 dark:text-cyan-300 dark:border-cyan-400/40 dark:bg-cyan-400/10',
     description: 'Entity reaching resources well outside its cohort access graph.',
   },
   device_spoofing: {
     label: 'Device spoofing',
     short: 'SPOOF',
     color: '#a78bfa',
-    chip: 'text-violet-300 border-violet-400/40 bg-violet-400/10',
+    chip: 'text-violet-700 border-violet-400/50 bg-violet-50 dark:text-violet-300 dark:border-violet-400/40 dark:bg-violet-400/10',
     description: 'Device fingerprint inconsistent with the entity enrolment history.',
   },
   low_and_slow_exfil: {
     label: 'Low & slow exfil',
     short: 'EXFIL',
     color: '#f472b6',
-    chip: 'text-pink-300 border-pink-400/40 bg-pink-400/10',
+    chip: 'text-pink-700 border-pink-400/50 bg-pink-50 dark:text-pink-300 dark:border-pink-400/40 dark:bg-pink-400/10',
     description: 'Sustained off-hours data egress kept under per-event volume thresholds.',
   },
   insider_drift: {
     label: 'Insider drift',
     short: 'DRIFT',
     color: '#94a3b8',
-    chip: 'text-slate-300 border-slate-400/40 bg-slate-400/10',
+    chip: 'text-slate-600 border-slate-400/50 bg-slate-100 dark:text-slate-300 dark:border-slate-400/40 dark:bg-slate-400/10',
     description: 'Gradual, persistent behavioural shift — often a benign role change.',
   },
   normal: {
     label: 'Normal',
     short: 'NORMAL',
     color: '#22c55e',
-    chip: 'text-green-300 border-green-400/40 bg-green-400/10',
+    chip: 'text-green-700 border-green-400/50 bg-green-50 dark:text-green-300 dark:border-green-400/40 dark:bg-green-400/10',
     description: 'Consistent with the entity baseline and its cohort.',
   },
   unknown_novel: UNKNOWN_META,
@@ -116,10 +116,10 @@ export const ENTITY_TYPE_LABEL: Record<string, string> = {
 /* ------------------------------------------------------------------- risk */
 
 export const RISK_COLOR: Record<RiskBand, string> = {
-  low: '#22c55e',
-  medium: '#eab308',
-  high: '#f97316',
-  critical: '#ef4444',
+  low: '#16a34a',
+  medium: '#b45309',
+  high: '#ea580c',
+  critical: '#EE3124',
 }
 
 export const RISK_BAND_CLASS: Record<RiskBand, string> = {

@@ -34,9 +34,9 @@ export default {
         // Risk ramp stays hardcoded — it's semantic and fixed across themes.
         risk: {
           low: '#16a34a',
-          medium: '#d97706',
+          medium: '#b45309',
           high: '#ea580c',
-          critical: '#dc2626',
+          critical: '#EE3124',
         },
       },
       fontFamily: {
