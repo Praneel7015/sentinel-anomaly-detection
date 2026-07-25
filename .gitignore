@@ -1,0 +1,65 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Tooling caches ---
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+.coverage
+htmlcov/
+
+# --- Generated data & model artifacts ---
+# Ignore the contents but keep the directories, so a fresh clone has somewhere
+# for `sentinel gen` and `sentinel train` to write.
+data/*
+artifacts/*
+!data/.gitkeep
+!artifacts/.gitkeep
+*.parquet
+*.joblib
+*.pt
+*.pth
+
+# --- Reports: keep the markdown, ignore rendered output ---
+reports/*.png
+reports/*.pdf
+reports/*.svg
+
+# --- Node / dashboard ---
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.local
+
+# --- Editors / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

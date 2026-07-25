@@ -1,0 +1,164 @@
+# ============================================================================
+# SENTINEL - detector, fusion and serving configuration
+#
+# Loaded by sentinel.config.load_model_config(). Unknown keys are a hard error.
+#
+# Fusion is a weighted sum in log-odds space over rank-based p-values, which is
+# what makes per-signal contributions exact rather than approximated. Changing
+# a weight here changes both the score and the explanation, consistently.
+# ============================================================================
+
+# ---------------------------------------------------------------------------
+# Additive log-odds fusion.
+#   z_d    = logit(1 - p_d) for detector d, clipped to +/- logit_clip
+#   score  = sigmoid(bias + sum_d w_d * z_d) * 100
+# Contribution of detector d is exactly w_d * z_d, so they sum to the logit.
+# `gru` is dropped and its weight redistributed proportionally when torch is
+# unavailable, so scores stay comparable across environments.
+# ---------------------------------------------------------------------------
+fusion:
+  weights:
+    profile: 1.00 # per-entity shrunk z-scores: the workhorse
+    isolation: 0.85 # IsolationForest over the joint feature vector
+    sequence: 0.80 # Markov / n-gram command surprisal
+    graph: 0.70 # entity-resource novelty and peer deviation
+    gru: 0.60 # optional torch GRU autoencoder
+  bias: -3.0 # prior log-odds of an event being an anomaly
+  logit_clip: 6.0 # stops one saturated detector from owning the score
+  redistribute_missing_weight: true
+
+# ---------------------------------------------------------------------------
+# Per-entity statistical profiler.
+# Every per-entity statistic is shrunk toward its cohort prior with weight
+# n / (n + k). Larger k = trust the cohort longer = safer cold start, slower
+# personalisation.
+# ---------------------------------------------------------------------------
+profile:
+  cohort_shrinkage_k: 20
+  ewma_half_life_days: 14.0 # baseline adaptation speed
+  min_variance: 1.0e-6 # guards divide-by-zero on constant features
+  poisoning_guard:
+    enabled: true
+    # Events at or above this risk do not update the baseline unless an analyst
+    # marks them benign. Without it, a slow attacker trains the model to accept.
+    max_risk_for_update: 65.0
+
+# ---------------------------------------------------------------------------
+# Detector-specific knobs.
+# ---------------------------------------------------------------------------
+isolation:
+  n_estimators: 200
+  max_samples: 4096
+  contamination: auto
+  random_state: 20260725
+
+sequence:
+  order: 2 # n-gram order of the command Markov model
+  smoothing: 0.5 # additive smoothing on unseen transitions
+  min_sequence_length: 2 # shorter sessions fall back to the cohort prior
+
+graph:
+  peer_window_days: 14
+  min_peers: 5
+  novelty_decay: 0.98
+
+gru:
+  hidden_size: 64
+  num_layers: 1
+  epochs: 8
+  batch_size: 256
+  learning_rate: 1.0e-3
+
+# ---------------------------------------------------------------------------
+# Torch is an upgrade, never a requirement. `auto` = use it if importable.
+# Set to false to force the numpy/sklearn path (used in CI), true to make a
+# missing torch a startup error.
+# ---------------------------------------------------------------------------
+torch:
+  enabled: auto
+
+# ---------------------------------------------------------------------------
+# Streaming score normalisation. p-values come from the rank of a score within
+# a sliding reservoir of recent scores, so the detector self-calibrates as
+# traffic shifts. Window size trades adaptivity against tail resolution: with
+# 20000 samples the finest resolvable p-value is 5e-5.
+# ---------------------------------------------------------------------------
+streaming:
+  quantile_window: 20000
+  min_window_for_pvalue: 500 # below this, fall back to the training quantiles
+  warmup_pvalue: 0.5 # neutral p-value during warm-up
+
+# ---------------------------------------------------------------------------
+# Alerting. The threshold is set by an analyst *budget*, not a magic number:
+# "we can triage 1% of events" is an operational fact, 72.4 is not.
+# ---------------------------------------------------------------------------
+alerting:
+  budget_pcts: [0.5, 1.0, 2.0]
+  default_budget_pct: 1.0
+  analyst_minutes_per_alert: 12 # turns the budget curve into analyst-hours
+
+# Risk-band cut points. Must stay in sync with sentinel.schema.RISK_BANDS;
+# the loader asserts this. Bands are half-open: [medium, high) etc.
+risk_thresholds:
+  medium: 40.0
+  high: 65.0
+  critical: 85.0
+
+# ---------------------------------------------------------------------------
+# Cold start. An entity with almost no history has a noisy profile, so its
+# threshold is widened (multiplied) until it has seen `min_events`. Alerts
+# raised in this state are flagged cold_start = true in the API so the analyst
+# knows the score is provisional.
+# ---------------------------------------------------------------------------
+cold_start:
+  min_events: 25
+  provisional_threshold_widening: 1.25
+  fall_back_to_cohort: true
+
+# ---------------------------------------------------------------------------
+# Page-Hinkley per-entity drift detection over the entity's risk stream.
+#   m_t     = sum_i (x_i - mean_i - delta)
+#   trigger when max_i(m_i) - m_t > lambda
+# delta is the tolerated magnitude of change; lambda is the detection
+# threshold, trading detection delay against false drift alarms.
+# ---------------------------------------------------------------------------
+drift:
+  page_hinkley:
+    delta: 0.005
+    lambda: 50.0
+    min_instances: 30
+  rebaseline:
+    # After a confirmed drift, temporarily shorten the EWMA half-life so the
+    # profile catches up in days instead of weeks, then restore it.
+    fast_half_life_days: 2.0
+    recovery_days: 7
+
+# ---------------------------------------------------------------------------
+# Attack-type classification. HistGBM plus a transparent signature matcher;
+# when they disagree the alert is reported as unknown_novel rather than
+# guessing, and `classifier_agreement` goes false on the wire.
+# ---------------------------------------------------------------------------
+classifier:
+  max_iter: 300
+  learning_rate: 0.08
+  max_depth: 6
+  class_weight: balanced
+  min_confidence: 0.35 # below this the prediction is unknown_novel
+  random_state: 20260725
+
+# ---------------------------------------------------------------------------
+# Explanations shown in the SOC dashboard.
+# ---------------------------------------------------------------------------
+explain:
+  top_k_contributions: 6
+  counterfactual_top_k: 3
+  shap_max_samples: 2000
+
+# ---------------------------------------------------------------------------
+# Serving.
+# ---------------------------------------------------------------------------
+serving:
+  artifacts_dir: artifacts/
+  max_alerts_in_memory: 5000
+  sse_heartbeat_s: 15.0
+  replay_speed: 50.0 # events per second in the demo stream driver

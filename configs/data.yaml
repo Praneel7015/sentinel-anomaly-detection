@@ -1,0 +1,155 @@
+# ============================================================================
+# SENTINEL - synthetic access-log generator configuration
+#
+# Loaded by sentinel.config.load_data_config(). Unknown keys are a hard error,
+# so this file and the DataConfig dataclasses stay in lockstep.
+#
+# Design intent: the dataset must be *hard*. Anomalies are rare (0.5-3% of
+# sessions), and every attack family has a benign confounder that trips the
+# same naive rule. If a threshold-on-one-feature baseline scores well, the
+# rates below are wrong, not the model.
+# ============================================================================
+
+# Master seed. Everything downstream (entity profiles, event sampling, attack
+# placement, event_id hashes) derives from this, so the corpus is byte-stable.
+seed: 20260725
+
+# Where events.parquet / labels.parquet / entities.json are written.
+output_dir: data/
+
+# ---------------------------------------------------------------------------
+# Population
+# ---------------------------------------------------------------------------
+entities:
+  users: 800 # human principals; circadian, geo-anchored, bursty
+  service_accounts: 150 # machine principals; near-uniform clock, high volume
+  edge_devices: 350 # OT/IIoT; metronomic, modbus/mqtt, tiny payloads
+
+# Entities held back to first appear in the *test* split only. These have zero
+# history when they are first scored, so they measure cold-start behaviour
+# directly instead of by proxy. Drawn proportionally across entity types.
+cold_start_entities: 60
+
+# ---------------------------------------------------------------------------
+# Time windows. Splits are strictly temporal and contiguous:
+#   train = [start_date, +train_days)
+#   val   = [end of train, +val_days)
+#   test  = [end of val,   +test_days)
+# A purely random split would leak future behaviour into the past, so it is
+# never offered as an option.
+# ---------------------------------------------------------------------------
+time:
+  start_date: "2026-01-05" # a Monday, so weekday/weekend phase is clean
+  train_days: 42
+  val_days: 7
+  test_days: 21
+  timezone: UTC # all timestamps are stored UTC; cohorts carry their own offset
+
+# ---------------------------------------------------------------------------
+# Volume. Per entity per active day, sampled uniformly in [min, max] then
+# modulated by the entity's own circadian and weekday profile.
+# ---------------------------------------------------------------------------
+events_per_entity_per_day:
+  user:
+    min: 8
+    max: 60
+  service_account:
+    min: 40
+    max: 400
+  edge_device:
+    min: 12
+    max: 90
+
+# Fraction of sessions that carry a non-empty command_sequence. Non-privileged
+# sessions legitimately have none, which is why emptiness is not itself a signal.
+privileged_session_rate: 0.35
+
+# ---------------------------------------------------------------------------
+# Attack injection. `rate` is the fraction of all sessions that belong to an
+# episode of that type. Kept inside the 0.005-0.03 band: high enough to give
+# the evaluator support, low enough that precision at a 1% alert budget is a
+# genuinely hard target. `params` is free-form and owned by each injector.
+# ---------------------------------------------------------------------------
+attacks:
+  brute_force:
+    rate: 0.020
+    params:
+      attempts_min: 12
+      attempts_max: 90
+      success_probability: 0.25 # most campaigns fail; failure is still an attack
+      interval_s_min: 2
+      interval_s_max: 45
+  impossible_travel:
+    rate: 0.008
+    params:
+      min_km_per_hour: 900 # faster than a commercial flight
+      gap_hours_min: 0.5
+      gap_hours_max: 4.0
+  credential_stuffing:
+    rate: 0.015
+    params:
+      accounts_per_source_ip_min: 5
+      accounts_per_source_ip_max: 40
+      per_account_attempts_max: 3 # low-and-wide, so per-entity counters miss it
+  lateral_movement:
+    rate: 0.010
+    params:
+      hops_min: 3
+      hops_max: 9
+      protocols: [smb, rdp, ssh]
+  device_spoofing:
+    rate: 0.007
+    params:
+      reuse_mac: true # cloned MAC, mismatched OS version -> fingerprint break
+      fingerprint_drift_fields: [device_os_version, device_protocol]
+  low_and_slow_exfil:
+    rate: 0.005
+    params:
+      days_min: 4
+      days_max: 21
+      bytes_per_session_multiplier: 2.5 # deliberately below a naive 10x rule
+      prefer_off_hours: true
+
+# ---------------------------------------------------------------------------
+# Edge cases. Labelled and episode-grouped, but is_anomaly = False: an insider
+# whose role genuinely changed should alert briefly and then stop once the
+# drift detector re-baselines them. This is the false-positive-tuning class.
+# ---------------------------------------------------------------------------
+edge_cases:
+  insider_drift:
+    rate: 0.006
+    params:
+      ramp_days: 14 # gradual, not a step change
+      new_resource_fraction: 0.6
+
+# ---------------------------------------------------------------------------
+# Benign confounders. Each is a legitimate business event engineered to trip
+# exactly one naive rule. Rates are per session.
+# ---------------------------------------------------------------------------
+confounders:
+  legit_travel: 0.012 # geo jump, but at plausible aircraft speed
+  new_device_enrollment: 0.010 # brand-new fingerprint, normal everything else
+  password_rotation: 0.009 # burst of auth failures then a success
+  vacation_return: 0.008 # long silence then a heavy catch-up day
+  maintenance_burst: 0.007 # service account floods a rare resource in-window
+
+# ---------------------------------------------------------------------------
+# Concept drift. A subset of entities has its baseline profile shifted partway
+# through the corpus so that adaptive re-baselining can be measured.
+# `drift_start_day` is an absolute day index from start_date; 49 = the first
+# day of the test window (42 train + 7 val).
+# ---------------------------------------------------------------------------
+drift:
+  drifting_entities: 40
+  drift_start_day: 49
+  ramp_days: 10 # days over which the shifted profile fully takes over
+  magnitude: 0.6 # 0 = no shift, 1 = fully replaced profile
+
+# ---------------------------------------------------------------------------
+# Noise floor. Even normal traffic has occasional failures and odd hours;
+# without this the "no failures ever" prior makes brute force trivial.
+# ---------------------------------------------------------------------------
+noise:
+  baseline_auth_failure_rate: 0.03
+  off_hours_fraction: 0.05
+  rare_resource_fraction: 0.02

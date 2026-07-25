@@ -1,0 +1,53 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sentinel"
+version = "0.1.0"
+description = "SENTINEL - explainable behavioural anomaly detection over access logs"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+license = { text = "MIT" }
+dependencies = [
+    "numpy",
+    "pandas",
+    "pyarrow",
+    "scikit-learn",
+    "scipy",
+    "pyyaml",
+    "faker",
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic>=2",
+    "matplotlib",
+    "typer",
+    "rich",
+    "networkx",
+    "shap",
+    # shap pulls numba; left free, the resolver prefers the newest numpy and
+    # backtracks numba to a version that cannot build on 3.12. Pin the floor.
+    "numba>=0.61",
+]
+
+[project.optional-dependencies]
+torch = ["torch"]
+dev = ["pytest", "ruff"]
+
+[project.scripts]
+sentinel = "sentinel.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sentinel"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
