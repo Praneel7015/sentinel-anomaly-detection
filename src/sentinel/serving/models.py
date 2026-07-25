@@ -41,6 +41,7 @@ __all__ = [
     "FeedbackRequest",
     "FeedbackResponse",
     "FeedbackVerdict",
+    "GeneralisationResult",
     "GroundTruth",
     "HealthResponse",
     "LatencyStats",
@@ -365,6 +366,7 @@ class MttdEntry(_Model):
 class SubgroupMetrics(_Model):
     precision: float
     recall: float
+    n_events: int = 0
 
 
 #: Cold-start and post-drift subgroups share the precision/recall shape.
@@ -384,6 +386,12 @@ class AblationRow(_Model):
     precision_at_1pct: float
 
 
+class GeneralisationResult(_Model):
+    held_out_attack: str
+    unsupervised_recall: float
+    n_events: int = 0
+
+
 class MetricsResponse(_Model):
     pr_auc: float
     roc_auc: float
@@ -398,6 +406,11 @@ class MetricsResponse(_Model):
     post_drift: SubgroupMetrics
     latency_ms: LatencyStats
     ablation: list[AblationRow] = Field(default_factory=list)
+    generalisation: GeneralisationResult | None = None
+    n_test_events: int = 0
+    n_test_anomalies: int = 0
+    anomaly_rate_pct: float = 0.0
+    threshold_at_1pct: float = 0.0
 
 
 # --------------------------------------------------------------------------- #
