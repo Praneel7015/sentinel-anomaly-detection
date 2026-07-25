@@ -366,8 +366,8 @@ function EntitySummaryCard({
           ['Events', summary.event_count.toLocaleString()],
           ['Alerts', String(summary.alert_count)],
           ['Cohort', summary.cohort],
-          ['Mean risk', summary.mean_risk.toFixed(1)],
-          ['Max risk', summary.max_risk.toFixed(1)],
+          ['Mean risk', (summary.mean_risk ?? 0).toFixed(1)],
+          ['Max risk', (summary.max_risk ?? 0).toFixed(1)],
           ['Cold-start', summary.cold_start ? 'Yes' : 'No'],
         ].map(([k, v]) => (
           <div key={k}>

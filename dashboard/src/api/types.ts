@@ -134,7 +134,7 @@ export interface EntitySummary {
   last_seen: string
   cold_start: boolean
   mean_risk: number
-  max_risk: number
+  max_risk?: number
 }
 
 export interface EntityListResponse {

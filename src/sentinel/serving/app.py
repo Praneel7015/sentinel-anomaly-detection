@@ -397,6 +397,7 @@ async def alert_detail(event_id: str) -> AlertDetailResponse:
     # entity summary
     rec = _entity_store.get(scored.entity_id)
     if rec is not None:
+        max_risk_val = round(max((rs for _, rs, _ in rec.risk_timeline), default=0.0), 2)
         entity_summary = EntitySummary(
             entity_id=rec.entity_id,
             entity_type=rec.entity_type,
@@ -407,6 +408,7 @@ async def alert_detail(event_id: str) -> AlertDetailResponse:
             last_seen=rec.last_seen,
             alert_count=rec.alert_count,
             mean_risk=round(rec.mean_risk, 2),
+            max_risk=max_risk_val,
         )
     else:
         entity_summary = EntitySummary(
@@ -415,6 +417,8 @@ async def alert_detail(event_id: str) -> AlertDetailResponse:
             cohort=scored.cohort,
             event_count=scored.entity_event_count,
             cold_start=scored.cold_start,
+            mean_risk=0.0,
+            max_risk=0.0,
         )
 
     similar = _alert_store.similar(scored)
