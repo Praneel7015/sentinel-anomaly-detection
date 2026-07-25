@@ -1,0 +1,522 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>SENTINEL — SIH Hackathon Pitch Deck</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#2a2a2a;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:system-ui,-apple-system,sans-serif;color:#1A1917}
+.deck{position:relative;width:960px}
+.slide{display:none;width:960px;min-height:540px;background:#fff;position:relative;overflow:hidden;flex-direction:column}
+.slide.active{display:flex}
+.slide-header{background:#EE3124;color:#fff;padding:14px 32px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center}
+.slide-header .sih-label{font-size:11px;opacity:.85;font-weight:400}
+.slide-body{flex:1;padding:28px 40px 20px;display:flex;flex-direction:column;gap:12px}
+.slide-footer{background:#1A1917;color:#fff;padding:8px 32px;font-size:10px;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em}
+.slide-footer .sih-footer{opacity:.7}
+.progress-bar-wrap{height:3px;background:#ddd;width:100%}
+.progress-bar{height:3px;background:#EE3124;transition:width .3s}
+h1.slide-title{font-size:26px;font-weight:800;color:#1A1917;line-height:1.2}
+h2.slide-title{font-size:22px;font-weight:800;color:#1A1917}
+h3.section-head{font-size:13px;font-weight:700;color:#EE3124;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+p,li{font-size:13px;line-height:1.6;color:#333}
+ul{padding-left:18px}
+ul li{margin-bottom:3px}
+.red{color:#EE3124}
+.tag{display:inline-block;background:#EE3124;color:#fff;border-radius:3px;padding:2px 8px;font-size:11px;font-weight:600;margin-right:4px}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.meta-item{border-left:3px solid #EE3124;padding:6px 12px;background:#FAFAF9}
+.meta-item .meta-label{font-size:10px;font-weight:700;color:#EE3124;text-transform:uppercase;letter-spacing:.06em}
+.meta-item .meta-value{font-size:14px;font-weight:600;color:#1A1917;margin-top:2px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;flex:1}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.card{background:#FAFAF9;border:1px solid #e8e6e3;border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.card h4{font-size:12px;font-weight:700;color:#1A1917;text-transform:uppercase;letter-spacing:.05em}
+.metric-big{font-size:28px;font-weight:800;color:#EE3124;font-variant-numeric:tabular-nums;font-family:ui-monospace,monospace}
+.metric-label{font-size:11px;color:#666}
+table{width:100%;border-collapse:collapse;font-size:12px}
+table th{background:#1A1917;color:#fff;padding:7px 10px;text-align:left;font-size:11px;font-weight:600}
+table td{padding:6px 10px;border-bottom:1px solid #e8e6e3;vertical-align:top}
+table tr:nth-child(even) td{background:#FAFAF9}
+code,pre{font-family:ui-monospace,'JetBrains Mono',Consolas,monospace;font-size:12px}
+.code-block{background:#1A1917;color:#a8ff78;border-radius:6px;padding:12px 16px;font-size:12px;line-height:1.7}
+.code-block .comment{color:#6a9955}
+.code-block .keyword{color:#569cd6}
+.code-block .string{color:#ce9178}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:10px 0;width:960px}
+.nav button{background:#EE3124;color:#fff;border:none;border-radius:4px;padding:8px 22px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s}
+.nav button:hover{opacity:.85}
+.nav button:disabled{background:#888;cursor:not-allowed}
+.slide-counter{color:#fff;font-size:13px;font-weight:600;letter-spacing:.04em}
+.ref-list{counter-reset:refs}
+.ref-list li{counter-increment:refs;list-style:none;padding:5px 0;border-bottom:1px solid #eee;font-size:12px}
+.ref-list li::before{content:counter(refs)".";color:#EE3124;font-weight:700;margin-right:8px}
+.artifact-box{background:#FAFAF9;border:1px solid #e0dedd;border-radius:6px;padding:12px;flex:1}
+.artifact-box h4{font-size:11px;font-weight:700;text-transform:uppercase;color:#EE3124;letter-spacing:.06em;margin-bottom:8px;border-bottom:2px solid #EE3124;padding-bottom:4px}
+.artifact-box p{font-size:12px;color:#444}
+.link-pill{display:inline-block;background:#1A1917;color:#fff;border-radius:4px;padding:3px 10px;font-size:11px;font-family:ui-monospace,monospace;margin:3px 0}
+.feasibility-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.check-list li{list-style:none;padding-left:0}
+.check-list li::before{content:"✓ ";color:#EE3124;font-weight:700}
+.flow-label{font-size:11px;font-weight:600;fill:#fff}
+@media print{
+  body{background:#fff;margin:0;padding:0;display:block}
+  .deck,.nav{width:100%}
+  .nav,.progress-bar-wrap{display:none}
+  .slide{display:flex!important;page-break-after:always;width:100%;min-height:540px;break-after:page}
+  .slide:last-child{page-break-after:avoid}
+}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 1: TITLE PAGE -->
+<div class="slide active" id="slide-1">
+  <div class="slide-header">
+    <span>SENTINEL &mdash; SIH Hackathon Submission</span>
+    <span class="sih-label">Smart India Hackathon 2025</span>
+  </div>
+  <div class="slide-body" style="justify-content:center;align-items:flex-start;gap:0;">
+    <div style="margin-bottom:16px">
+      <div style="font-size:48px;font-weight:900;color:#EE3124;letter-spacing:-.02em;line-height:1">SENTINEL</div>
+      <div style="font-size:16px;font-weight:600;color:#1A1917;margin-top:6px;max-width:560px">Behavioural Anomaly Detection System for Enterprise Security</div>
+      <div style="font-size:12px;color:#666;margin-top:4px">Theme: Cybersecurity / Smart Automation &nbsp;&bull;&nbsp; Category: Software</div>
+    </div>
+    <div class="meta-grid" style="width:100%;max-width:700px">
+      <div class="meta-item">
+        <div class="meta-label">Problem Statement ID</div>
+        <div class="meta-value">HW001</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Problem Statement Title</div>
+        <div class="meta-value" style="font-size:12px">Behavioural Anomaly Detection System for Enterprise Security</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Student Name</div>
+        <div class="meta-value">[YOUR NAME]</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Student ID</div>
+        <div class="meta-value">[YOUR ID]</div>
+      </div>
+    </div>
+    <div style="margin-top:20px;padding:12px 20px;border:2px solid #EE3124;border-radius:6px;display:inline-block;background:#fff8f7">
+      <div style="font-size:11px;font-weight:700;color:#EE3124;text-transform:uppercase;letter-spacing:.08em">Live Demo</div>
+      <div style="font-size:12px;font-family:ui-monospace,monospace;color:#1A1917;margin-top:4px">https://sentinel-anomaly-detection-phi.vercel.app</div>
+    </div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" style="width:16.67%"></div></div>
+  <div class="slide-footer">
+    <span class="sih-footer">@SIH Idea submission - Template</span>
+    <span>Slide 1 of 6</span>
+  </div>
+</div>
+
+
+<!-- SLIDE 2: IDEA TITLE + PROPOSED SOLUTION -->
+<div class="slide" id="slide-2">
+  <div class="slide-header">
+    <span>Idea Title &amp; Proposed Solution</span>
+    <span class="sih-label">Smart India Hackathon 2025</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">SENTINEL &mdash; Explainable Behavioural Anomaly Detection</h2>
+    <div class="two-col" style="gap:20px;flex:1">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div>
+          <h3 class="section-head">The Problem</h3>
+          <ul style="font-size:12px">
+            <li>80% of breaches involve insider threats or compromised credentials</li>
+            <li>Analysts face 500+ daily alerts — can only review ~20</li>
+            <li>Rule-based systems generate noise; real threats get missed</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="section-head">Proposed Solution</h3>
+          <ul style="font-size:12px">
+            <li>Scores every access event in real-time (risk 0&ndash;100)</li>
+            <li>5-detector ML ensemble working in parallel</li>
+            <li>Additive log-odds fusion &rarr; single interpretable risk score</li>
+            <li>Every alert: natural-language explanation + counterfactual</li>
+            <li>Live prototype deployed and accessible now</li>
+          </ul>
+        </div>
+        <div style="background:#fff8f7;border:1px solid #EE3124;border-radius:5px;padding:8px 12px">
+          <div style="font-size:10px;font-weight:700;color:#EE3124;text-transform:uppercase;letter-spacing:.06em">5 Detectors</div>
+          <div style="font-size:11px;color:#333;margin-top:4px;line-height:1.8">Statistical Profile &bull; IsolationForest &bull; Markov Chains &bull; Graph Anomaly &bull; GRU Autoencoder</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <h3 class="section-head">System Pipeline</h3>
+        <svg viewBox="0 0 360 290" width="360" height="290" style="flex-shrink:0">
+          <!-- Access Logs -->
+          <rect x="110" y="6" width="140" height="32" rx="5" fill="#1A1917"/>
+          <text x="180" y="27" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">Access Logs</text>
+          <!-- arrow -->
+          <line x1="180" y1="38" x2="180" y2="54" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+          <!-- Feature Eng -->
+          <rect x="95" y="55" width="170" height="32" rx="5" fill="#EE3124"/>
+          <text x="180" y="76" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">Feature Engineering</text>
+          <!-- arrow -->
+          <line x1="180" y1="87" x2="180" y2="103" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+          <!-- 5 Detectors -->
+          <rect x="75" y="104" width="210" height="32" rx="5" fill="#EE3124"/>
+          <text x="180" y="125" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">5 Parallel Detectors</text>
+          <!-- arrow -->
+          <line x1="180" y1="136" x2="180" y2="152" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+          <!-- Log-Odds Fusion -->
+          <rect x="80" y="153" width="200" height="32" rx="5" fill="#EE3124"/>
+          <text x="180" y="174" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">Log-Odds Fusion</text>
+          <!-- arrow -->
+          <line x1="180" y1="185" x2="180" y2="201" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+          <!-- Risk Score -->
+          <rect x="105" y="202" width="150" height="32" rx="5" fill="#EE3124"/>
+          <text x="180" y="223" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">Risk Score 0&ndash;100</text>
+          <!-- arrow down -->
+          <line x1="180" y1="234" x2="180" y2="250" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+          <!-- SOC Dashboard -->
+          <rect x="85" y="251" width="190" height="32" rx="5" fill="#1A1917"/>
+          <text x="180" y="272" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">SOC Dashboard</text>
+          <defs>
+            <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L6,3 z" fill="#888"/>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" style="width:33.33%"></div></div>
+  <div class="slide-footer">
+    <span class="sih-footer">@SIH Idea submission - Template</span>
+    <span>Slide 2 of 6</span>
+  </div>
+</div>
+
+
+<!-- SLIDE 3: TECHNICAL APPROACH -->
+<div class="slide" id="slide-3">
+  <div class="slide-header">
+    <span>Technical Approach</span>
+    <span class="sih-label">Smart India Hackathon 2025</span>
+  </div>
+  <div class="slide-body" style="gap:10px">
+    <h2 class="slide-title">Technical Approach</h2>
+    <div class="two-col" style="flex:1;gap:24px">
+      <!-- Left: Technology Stack -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <h3 class="section-head">Technology Stack</h3>
+        <div class="card" style="gap:8px">
+          <div><span class="tag">Backend</span><span style="font-size:12px">Python 3.12 &bull; FastAPI &bull; scikit-learn &bull; PyTorch &bull; Pydantic &bull; uvicorn</span></div>
+          <div><span class="tag">Frontend</span><span style="font-size:12px">React 19 &bull; TypeScript &bull; Vite &bull; Tailwind CSS &bull; Recharts</span></div>
+          <div><span class="tag">Deploy</span><span style="font-size:12px">Render (API) &bull; Vercel (Dashboard)</span></div>
+          <div><span class="tag">Data</span><span style="font-size:12px">30,000+ synthetic events &bull; 7 attack scenario types</span></div>
+        </div>
+        <div style="background:#fff8f7;border:1px solid #EE3124;border-radius:5px;padding:8px 12px;margin-top:4px">
+          <div style="font-size:10px;font-weight:700;color:#EE3124;letter-spacing:.06em;text-transform:uppercase">Performance</div>
+          <div style="font-size:12px;margin-top:4px">Working prototype live &mdash; <strong>p99 latency &lt; 300ms</strong></div>
+          <div style="font-size:12px;margin-top:2px">REST API + SSE streaming &mdash; integrates with any SIEM</div>
+        </div>
+      </div>
+      <!-- Right: Methodology Flow -->
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <h3 class="section-head">Methodology Flow</h3>
+        <svg viewBox="0 0 300 310" width="300" height="310">
+          <defs>
+            <marker id="arr2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L6,3 z" fill="#888"/>
+            </marker>
+          </defs>
+          <!-- Step boxes with alternating colors -->
+          <!-- 1 -->
+          <rect x="40" y="5" width="220" height="30" rx="5" fill="#1A1917"/>
+          <text x="150" y="25" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">1. Data Ingestion (Access Logs)</text>
+          <line x1="150" y1="35" x2="150" y2="48" stroke="#888" stroke-width="1.5" marker-end="url(#arr2)"/>
+          <!-- 2 -->
+          <rect x="40" y="49" width="220" height="30" rx="5" fill="#EE3124"/>
+          <text x="150" y="69" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">2. Leakage-free Feature Engineering</text>
+          <line x1="150" y1="79" x2="150" y2="92" stroke="#888" stroke-width="1.5" marker-end="url(#arr2)"/>
+          <!-- 3 -->
+          <rect x="40" y="93" width="220" height="30" rx="5" fill="#EE3124"/>
+          <text x="150" y="113" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">3. Parallel Detector Stack (5 models)</text>
+          <line x1="150" y1="123" x2="150" y2="136" stroke="#888" stroke-width="1.5" marker-end="url(#arr2)"/>
+          <!-- 4 -->
+          <rect x="40" y="137" width="220" height="30" rx="5" fill="#EE3124"/>
+          <text x="150" y="157" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">4. Log-Odds Score Fusion</text>
+          <line x1="150" y1="167" x2="150" y2="180" stroke="#888" stroke-width="1.5" marker-end="url(#arr2)"/>
+          <!-- 5 -->
+          <rect x="40" y="181" width="220" height="30" rx="5" fill="#EE3124"/>
+          <text x="150" y="201" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">5. Attack Type Classification (HistGBM)</text>
+          <line x1="150" y1="211" x2="150" y2="224" stroke="#888" stroke-width="1.5" marker-end="url(#arr2)"/>
+          <!-- 6 -->
+          <rect x="40" y="225" width="220" height="30" rx="5" fill="#1A1917"/>
+          <text x="150" y="245" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">6. REST API + SSE Streaming</text>
+          <line x1="150" y1="255" x2="150" y2="268" stroke="#888" stroke-width="1.5" marker-end="url(#arr2)"/>
+          <!-- 7 -->
+          <rect x="40" y="269" width="220" height="30" rx="5" fill="#1A1917"/>
+          <text x="150" y="289" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">7. SOC Dashboard (Real-time Alerts)</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" style="width:50%"></div></div>
+  <div class="slide-footer">
+    <span class="sih-footer">@SIH Idea submission - Template</span>
+    <span>Slide 3 of 6</span>
+  </div>
+</div>
+
+
+<!-- SLIDE 4: FEASIBILITY AND VIABILITY -->
+<div class="slide" id="slide-4">
+  <div class="slide-header">
+    <span>Feasibility and Viability</span>
+    <span class="sih-label">Smart India Hackathon 2025</span>
+  </div>
+  <div class="slide-body" style="gap:10px">
+    <h2 class="slide-title">Feasibility and Viability</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1">
+      <!-- Left column -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div>
+          <h3 class="section-head">Feasibility</h3>
+          <ul class="check-list" style="font-size:12px">
+            <li>Fully deployed working prototype &mdash; not just a concept</li>
+            <li>Runs on commodity hardware, no GPU required for inference</li>
+            <li>REST API + SSE streaming, integrates with any SIEM</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="section-head">Real Metrics (Baseline Stub Model)</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+            <div class="card" style="align-items:center">
+              <div class="metric-big">0.661</div>
+              <div class="metric-label">ROC-AUC</div>
+            </div>
+            <div class="card" style="align-items:center">
+              <div class="metric-big">100%</div>
+              <div class="metric-label">Lateral Movement Recall</div>
+            </div>
+            <div class="card" style="align-items:center">
+              <div class="metric-big">143ms</div>
+              <div class="metric-label">Scoring Latency p50</div>
+            </div>
+            <div class="card" style="align-items:center">
+              <div class="metric-big">2.1%</div>
+              <div class="metric-label">False Positive Rate</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Right column: Challenges table -->
+      <div>
+        <h3 class="section-head">Challenges &amp; Mitigation</h3>
+        <table style="margin-top:4px">
+          <thead>
+            <tr>
+              <th>Challenge</th>
+              <th>Strategy</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Cold-start<br/><span style="font-size:10px;color:#888">(new entities)</span></td>
+              <td style="font-size:11px">Shrink profile toward cohort prior</td>
+            </tr>
+            <tr>
+              <td>Concept drift</td>
+              <td style="font-size:11px">Page-Hinkley change detector &rarr; auto re-baseline</td>
+            </tr>
+            <tr>
+              <td>Alert fatigue</td>
+              <td style="font-size:11px">Budget-based threshold (top N% events only)</td>
+            </tr>
+            <tr>
+              <td>Interpretability</td>
+              <td style="font-size:11px">Additive log-odds decomposition (exact, not SHAP approx)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" style="width:66.67%"></div></div>
+  <div class="slide-footer">
+    <span class="sih-footer">@SIH Idea submission - Template</span>
+    <span>Slide 4 of 6</span>
+  </div>
+</div>
+
+
+<!-- SLIDE 5: ARTIFACTS -->
+<div class="slide" id="slide-5">
+  <div class="slide-header">
+    <span>Artifacts</span>
+    <span class="sih-label">Smart India Hackathon 2025</span>
+  </div>
+  <div class="slide-body" style="gap:10px">
+    <h2 class="slide-title">Artifacts</h2>
+    <!-- Live System Links -->
+    <div>
+      <h3 class="section-head">Live System</h3>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
+        <div style="background:#FAFAF9;border:1px solid #e0dedd;border-radius:5px;padding:8px 14px">
+          <div style="font-size:10px;font-weight:700;color:#EE3124;text-transform:uppercase;letter-spacing:.06em">Dashboard</div>
+          <div class="link-pill">sentinel-anomaly-detection-phi.vercel.app</div>
+        </div>
+        <div style="background:#FAFAF9;border:1px solid #e0dedd;border-radius:5px;padding:8px 14px">
+          <div style="font-size:10px;font-weight:700;color:#EE3124;text-transform:uppercase;letter-spacing:.06em">API Docs</div>
+          <div class="link-pill">sentinel-anomaly-detection.onrender.com/api/docs</div>
+        </div>
+        <div style="background:#FAFAF9;border:1px solid #e0dedd;border-radius:5px;padding:8px 14px">
+          <div style="font-size:10px;font-weight:700;color:#EE3124;text-transform:uppercase;letter-spacing:.06em">GitHub</div>
+          <div class="link-pill">github.com/Praneel7015/sentinel-anomaly-detection</div>
+        </div>
+      </div>
+    </div>
+    <!-- Dashboard Panels -->
+    <div>
+      <h3 class="section-head">Dashboard Screenshots</h3>
+      <div class="three-col" style="margin-top:4px">
+        <div class="artifact-box">
+          <h4>Triage View</h4>
+          <div style="background:#1A1917;border-radius:4px;padding:8px;margin-bottom:6px">
+            <svg viewBox="0 0 200 80" width="100%" height="80">
+              <rect x="4" y="6" width="192" height="18" rx="3" fill="#EE3124" opacity=".9"/>
+              <text x="10" y="19" font-size="9" fill="#fff" font-weight="600">user_042 &nbsp; RISK 91 &nbsp; Brute Force</text>
+              <rect x="4" y="28" width="192" height="18" rx="3" fill="#b02010" opacity=".7"/>
+              <text x="10" y="41" font-size="9" fill="#fff" font-weight="600">user_017 &nbsp; RISK 78 &nbsp; Lateral Move</text>
+              <rect x="4" y="50" width="192" height="18" rx="3" fill="#5a5a5a" opacity=".7"/>
+              <text x="10" y="63" font-size="9" fill="#ccc" font-weight="600">user_088 &nbsp; RISK 34 &nbsp; Off-hours</text>
+            </svg>
+          </div>
+          <p>108 live alerts &bull; ranked by risk &bull; click for full ML explanation</p>
+        </div>
+        <div class="artifact-box">
+          <h4>Entity View</h4>
+          <div style="background:#1A1917;border-radius:4px;padding:8px;margin-bottom:6px">
+            <svg viewBox="0 0 200 80" width="100%" height="80">
+              <text x="100" y="16" text-anchor="middle" font-size="9" fill="#EE3124" font-weight="700">user_042 &mdash; Risk Timeline</text>
+              <polyline points="10,65 30,60 50,55 70,30 90,20 110,18 130,40 150,70 170,65 190,68" fill="none" stroke="#EE3124" stroke-width="2"/>
+              <line x1="10" y1="70" x2="190" y2="70" stroke="#555" stroke-width="1"/>
+              <line x1="10" y1="20" x2="10" y2="70" stroke="#555" stroke-width="1"/>
+              <circle cx="110" cy="18" r="3" fill="#EE3124"/>
+            </svg>
+          </div>
+          <p>9 entities profiled &bull; risk timeline &bull; activity by hour</p>
+        </div>
+        <div class="artifact-box">
+          <h4>Operations View</h4>
+          <div style="background:#1A1917;border-radius:4px;padding:8px;margin-bottom:6px;display:flex;gap:10px;justify-content:center">
+            <div style="text-align:center">
+              <div style="font-size:18px;font-weight:800;color:#EE3124;font-family:ui-monospace,monospace">0.661</div>
+              <div style="font-size:8px;color:#aaa">ROC-AUC</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:18px;font-weight:800;color:#888;font-family:ui-monospace,monospace">0.029</div>
+              <div style="font-size:8px;color:#aaa">PR-AUC</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:18px;font-weight:800;color:#4a9;font-family:ui-monospace,monospace">143ms</div>
+              <div style="font-size:8px;color:#aaa">p50 Lat.</div>
+            </div>
+          </div>
+          <p>PR-AUC: 0.029 &bull; ROC-AUC: 0.661 &bull; Latency p50: 143ms</p>
+        </div>
+      </div>
+    </div>
+    <!-- Code Snippet -->
+    <div>
+      <h3 class="section-head">Core Algorithm</h3>
+      <div class="code-block" style="margin-top:4px">
+        <span class="comment"># Core: additive log-odds fusion</span><br/>
+        <span class="keyword">risk_score</span> = sigmoid(sum(<span class="string">w_i</span> * <span class="string">log_odds_i</span> <span class="keyword">for</span> i <span class="keyword">in</span> detectors)) * <span class="string">100</span>
+      </div>
+    </div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" style="width:83.33%"></div></div>
+  <div class="slide-footer">
+    <span class="sih-footer">@SIH Idea submission - Template</span>
+    <span>Slide 5 of 6</span>
+  </div>
+</div>
+
+
+<!-- SLIDE 6: RESEARCH AND REFERENCES -->
+<div class="slide" id="slide-6">
+  <div class="slide-header">
+    <span>Research and References</span>
+    <span class="sih-label">Smart India Hackathon 2025</span>
+  </div>
+  <div class="slide-body" style="gap:12px">
+    <h2 class="slide-title">Research and References</h2>
+    <div class="two-col" style="flex:1;gap:24px">
+      <div>
+        <h3 class="section-head">References</h3>
+        <ol class="ref-list" style="margin-top:6px">
+          <li>Chandola, V., et al. <em>"Anomaly detection: A survey."</em> ACM Computing Surveys, 2009</li>
+          <li>Liu, F.T., et al. <em>"Isolation Forest."</em> ICDM, 2008</li>
+          <li>Cho, K., et al. <em>"Learning Phrase Representations using RNN Encoder-Decoder."</em> EMNLP, 2014 (basis for GRU-AE)</li>
+          <li>Page, E.S. <em>"Continuous Inspection Schemes."</em> Biometrika, 1954 (Page-Hinkley test)</li>
+          <li>Chen, T., Guestrin, C. <em>"XGBoost: A Scalable Tree Boosting System."</em> KDD, 2016</li>
+        </ol>
+      </div>
+      <div>
+        <h3 class="section-head">Research Basis</h3>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:6px">
+          <div class="card">
+            <div style="font-size:11px;font-weight:700;color:#1A1917">Leakage-free Feature Engineering</div>
+            <p style="font-size:11px">All features computed exclusively from past events &mdash; no train/test contamination in temporal data, ensuring valid out-of-sample evaluation.</p>
+          </div>
+          <div class="card">
+            <div style="font-size:11px;font-weight:700;color:#1A1917">Ensemble Anomaly Detection</div>
+            <p style="font-size:11px">Combines statistical, ML, and deep learning signals for robust coverage across heterogeneous attack patterns that no single model captures.</p>
+          </div>
+          <div class="card">
+            <div style="font-size:11px;font-weight:700;color:#1A1917">Explainability-by-Design</div>
+            <p style="font-size:11px">Log-odds decomposition gives exact per-feature contributions &mdash; not post-hoc SHAP approximations &mdash; enabling full audit trails for SOC analysts.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" style="width:100%"></div></div>
+  <div class="slide-footer">
+    <span class="sih-footer">@SIH Idea submission - Template</span>
+    <span>Slide 6 of 6</span>
+  </div>
+</div>
+
+
+</div><!-- end .deck -->
+
+<!-- Navigation Controls -->
+<div class="nav">
+  <button id="btn-prev" onclick="changeSlide(-1)" disabled>&#8592; Prev</button>
+  <span class="slide-counter" id="counter">Slide 1 of 6</span>
+  <button id="btn-next" onclick="changeSlide(1)">Next &#8594;</button>
+</div>
+
+<script>
+var current = 1;
+var total = 6;
+
+function changeSlide(dir) {
+  var slides = document.querySelectorAll('.slide');
+  slides[current - 1].classList.remove('active');
+  current = Math.max(1, Math.min(total, current + dir));
+  slides[current - 1].classList.add('active');
+  document.getElementById('counter').textContent = 'Slide ' + current + ' of ' + total;
+  document.getElementById('btn-prev').disabled = current === 1;
+  document.getElementById('btn-next').disabled = current === total;
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); if (current < total) changeSlide(1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); if (current > 1) changeSlide(-1); }
+});
+</script>
+</body>
+</html>
