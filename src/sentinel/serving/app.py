@@ -289,9 +289,17 @@ app = FastAPI(
     lifespan=_lifespan,
 )
 
+_CORS_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:4173",
+    "https://sentinel-soc.vercel.app",
+    *[o.strip() for o in os.environ.get("SENTINEL_CORS_ORIGINS", "").split(",") if o.strip()],
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=_CORS_ORIGINS,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -630,6 +638,14 @@ async def stream_control(req: StreamControlRequest) -> StreamControlResponse:
 # --------------------------------------------------------------------------- #
 
 app.include_router(router)
+
+
+# Redirect root to API docs for convenience
+from fastapi.responses import RedirectResponse  # noqa: E402
+
+@app.get("/", include_in_schema=False)
+async def root_redirect() -> RedirectResponse:
+    return RedirectResponse(url="/api/docs")
 
 
 # --------------------------------------------------------------------------- #
